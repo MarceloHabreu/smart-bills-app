@@ -15,8 +15,12 @@ import {
 } from '@expo-google-fonts/poppins';
 
 import AppLoading from 'expo-app-loading';
+import { AuthProvider } from './src/contexts/AuthContext';
+import { useNavigationContainerRef } from '@react-navigation/native';
+import AuthGate from './AuthGate';
 
 export default function App() {
+   const navigationRef = useNavigationContainerRef<any>();
    const [fontsLoaded] = useFonts({
       Poppins_300Light,
       Lobster_400Regular,
@@ -30,9 +34,12 @@ export default function App() {
       return <AppLoading />;
    }
    return (
-      <NavigationContainer>
-         <Routes />
-      </NavigationContainer>
+      <AuthProvider>
+         <NavigationContainer ref={navigationRef}>
+            <AuthGate navigationRef={navigationRef} />
+            <Routes />
+         </NavigationContainer>
+      </AuthProvider>
    );
 }
 

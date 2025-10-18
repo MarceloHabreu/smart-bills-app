@@ -1,9 +1,9 @@
 import { forwardRef, LegacyRef } from 'react';
 import { View, Text, TextInput, TextInputProps, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
-import { themes } from '../../global/themes';
 import { FontAwesome, MaterialIcons, Octicons } from '@expo/vector-icons';
 import { fonts } from '../../fonts/fonts';
+import colors from '../../constants/colors';
 
 type IconComponent =
    | React.ComponentType<React.ComponentProps<typeof MaterialIcons>>
@@ -57,7 +57,7 @@ export const Input = forwardRef((Props: Props, ref: LegacyRef<TextInput> | null)
          <View style={[styles.boxInput, { paddingLeft: calculateSizePaddingLeft() }]}>
             {IconLeft && iconLeftName && (
                <TouchableOpacity onPress={onIconLeftPress}>
-                  <IconLeft name={iconLeftName as any} size={20} color={themes.colors.gray} />
+                  <IconLeft name={iconLeftName as any} size={20} color={colors.gray} />
                </TouchableOpacity>
             )}
 
@@ -67,7 +67,7 @@ export const Input = forwardRef((Props: Props, ref: LegacyRef<TextInput> | null)
                   {
                      width: calculateSizeWidth(),
                      fontFamily: fonts.body_poppins300,
-                     color: themes.colors.gray,
+                     color: colors.gray,
                   },
                ]}
                {...rest}
@@ -75,7 +75,7 @@ export const Input = forwardRef((Props: Props, ref: LegacyRef<TextInput> | null)
 
             {IconRigth && iconRigthName && (
                <TouchableOpacity onPress={onIconRigthPress}>
-                  <IconRigth name={iconRigthName as any} size={20} color={themes.colors.gray} />
+                  <IconRigth name={iconRigthName as any} size={20} color={colors.gray} />
                </TouchableOpacity>
             )}
          </View>

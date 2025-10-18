@@ -1,11 +1,11 @@
 import { StyleSheet } from 'react-native';
-import { themes } from '../../global/themes';
 import { fonts } from '../../fonts/fonts';
+import colors from '../../constants/colors';
 
 export const styles = StyleSheet.create({
    container: {},
    button: {
-      backgroundColor: themes.colors.primary,
+      backgroundColor: colors.primary,
       height: 55,
       width: '85%',
       borderRadius: 20,
@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
    },
 
    textButton: {
-      color: themes.colors.txtBtn,
+      color: colors.txtBtn,
       fontFamily: fonts.body_poppins600,
       fontSize: 20,
    },

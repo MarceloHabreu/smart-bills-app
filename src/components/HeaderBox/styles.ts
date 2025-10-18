@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { fonts } from '../../fonts/fonts';
-import { themes } from '../../global/themes';
+import colors from '../../constants/colors';
 
 export const styles = StyleSheet.create({
    logo: {
@@ -11,13 +11,13 @@ export const styles = StyleSheet.create({
    logoText: {
       fontFamily: fonts.title,
       fontSize: 42,
-      color: themes.colors.dark,
+      color: colors.dark,
    },
 
    welcomeText: {
       fontFamily: fonts.body_poppins600,
       fontSize: 18,
-      color: themes.colors.dark,
+      color: colors.dark,
       marginTop: 5,
    },
 });

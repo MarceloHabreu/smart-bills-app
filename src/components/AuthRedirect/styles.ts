@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { fonts } from '../../fonts/fonts';
-import { themes } from '../../global/themes';
+import colors from '../../constants/colors';
 
 export const styles = StyleSheet.create({
    textAuth: {
@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
    },
 
    textLink: {
-      color: themes.colors.dark,
+      color: colors.dark,
       fontFamily: fonts.body_poppins700,
    },
 });

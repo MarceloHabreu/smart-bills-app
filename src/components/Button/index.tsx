@@ -10,7 +10,11 @@ type Props = TouchableHighlightProps & {
 export function Button({ ...rest }: Props) {
    return (
       <TouchableOpacity style={styles.button} {...rest} activeOpacity={0.6}>
-         {rest.loading ? <ActivityIndicator /> : <Text style={styles.textButton}>{rest.text}</Text>}
+         {rest.loading ? (
+            <ActivityIndicator size="small" color="#fff" />
+         ) : (
+            <Text style={styles.textButton}>{rest.text}</Text>
+         )}
       </TouchableOpacity>
    );
 }

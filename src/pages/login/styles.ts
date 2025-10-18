@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet } from 'react-native';
-import { themes } from '../../global/themes';
 import { fonts } from '../../fonts/fonts';
+import colors from '../../constants/colors';
 
 export const styles = StyleSheet.create({
    container: {
@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
       justifyContent: 'center',
       borderBottomLeftRadius: 40,
       borderBottomRightRadius: 40,
-      backgroundColor: themes.colors.bgScreen,
+      backgroundColor: colors.bgScreen,
       paddingTop: 20,
    },
 
@@ -28,13 +28,13 @@ export const styles = StyleSheet.create({
    logoText: {
       fontFamily: fonts.title,
       fontSize: 42,
-      color: themes.colors.dark,
+      color: colors.dark,
    },
 
    welcomeText: {
       fontFamily: fonts.body_poppins600,
       fontSize: 20,
-      color: themes.colors.dark,
+      color: colors.dark,
       marginTop: 5,
    },
 
@@ -66,7 +66,7 @@ export const styles = StyleSheet.create({
    },
 
    textLink: {
-      color: themes.colors.dark,
+      color: colors.dark,
       fontFamily: fonts.body_poppins700,
    },
 });
