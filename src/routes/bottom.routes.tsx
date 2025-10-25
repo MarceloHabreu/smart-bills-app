@@ -16,6 +16,9 @@ export default function BottomRoutes() {
          initialRouteName="Home"
          screenOptions={{
             headerShown: false,
+            tabBarStyle: {
+               display: 'none',
+            },
          }}
          tabBar={(props) => <CustomTabBar {...props} />}
       >
