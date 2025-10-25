@@ -46,7 +46,7 @@ export function Login() {
          return;
       }
       setLoading(false);
-      navigation.navigate('BottomRoutes');
+      navigation.reset({ routes: [{ name: 'BottomRoutes' }] });
    }
    return (
       <KeyboardAvoidingView
