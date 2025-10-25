@@ -19,5 +19,7 @@ export const styles = StyleSheet.create({
       fontSize: 18,
       color: colors.dark,
       marginTop: 5,
+      textAlign: 'center',
+      marginBottom: 35,
    },
 });

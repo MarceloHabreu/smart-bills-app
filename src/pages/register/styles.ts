@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
+      textAlign: 'center',
    },
 
    boxTop: {
@@ -52,6 +53,7 @@ export const styles = StyleSheet.create({
       width: '100%',
       alignItems: 'center',
       justifyContent: 'center',
+      marginTop: 40,
    },
 
    textToRegister: {
