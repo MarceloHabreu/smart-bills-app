@@ -9,19 +9,22 @@ import {
 } from 'react-native';
 
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
-import { Input } from '../../components/Input';
-import { Button } from '../../components/Button';
+import { Input } from '../../components/auth/Input';
+import { Button } from '../../components/auth/Button';
 import { styles } from './styles';
-import { HeaderBox } from '../../components/HeaderBox';
-import { AuthRedirect } from '../../components/AuthRedirect';
+import { HeaderBox } from '../../components/auth/HeaderBox';
+import { AuthRedirect } from '../../components/auth/AuthRedirect';
 import { supabase } from '../../lib/supabase';
 import { NavigationProp, useNavigation } from '@react-navigation/core';
+import { useAuth } from '../../contexts/AuthContext';
 
 export function Login() {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [showPassword, setShowPassword] = useState(true);
    const [loading, setLoading] = useState(false);
+
+   const { setAuth } = useAuth();
 
    const navigation = useNavigation<NavigationProp<any>>();
 
@@ -45,8 +48,12 @@ export function Login() {
          setLoading(false);
          return;
       }
+
+      if (data.user) {
+         setAuth(data.user);
+         navigation.reset({ routes: [{ name: 'BottomRoutes' }] });
+      }
       setLoading(false);
-      navigation.reset({ routes: [{ name: 'BottomRoutes' }] });
    }
    return (
       <KeyboardAvoidingView

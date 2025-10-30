@@ -1,6 +1,6 @@
 import { Image, Text, TextInputProps } from 'react-native';
 import { styles } from './styles';
-import Logo from '../../assets/smartbills_logo.png';
+import Logo from '../../../assets/smartbills_logo.png';
 
 type Props = {
    title?: string;
