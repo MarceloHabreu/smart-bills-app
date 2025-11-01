@@ -8,10 +8,9 @@ interface Bill {
    name: string;
    amount: number;
    status: 'pending' | 'overdue' | 'paid';
-   due_date: Date;
+   due_date: string;
    user_id: string;
 }
-
 interface PaidListProps {
    data: Bill[];
    fetchBills: () => Promise<void>;
@@ -29,10 +28,10 @@ export default function PaidList({ data, fetchBills }: PaidListProps) {
       <View style={[styles.billCard, { borderLeftColor: '#23AEB8', borderLeftWidth: 4 }]}>
          <View style={styles.billHeader}>
             <Text style={styles.billType}>{item.name}</Text>
-            <Text style={styles.billAmount}>R$ {item.amount.toFixed(2)}</Text>
+            <Text style={styles.billAmount}>R$ {item.amount.toFixed(2).split('.').join(',')}</Text>
          </View>
          <Text style={styles.billDueDate}>
-            Pago em {new Date(item.due_date).toLocaleDateString()}
+            Pago em {item.due_date.split('-').reverse().join('/')}
          </Text>
          <Button
             text="Pré-Agendar"
