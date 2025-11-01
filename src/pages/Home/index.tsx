@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, SafeAreaView, ActivityIndicator } from 'react-native';
 import { EvilIcons, Feather } from '@expo/vector-icons';
 import { styles } from './styles';
 import { Input } from '../../components/Input';
@@ -12,13 +12,11 @@ import StatusTabs from '../../components/StatusTabs/Index';
 interface Bill {
    id: string;
    name: string;
-   price: string;
-   date: string;
+   amount: number;
    status: 'pending' | 'overdue' | 'paid';
-   due_date?: string;
-   user_id?: string;
+   due_date: Date;
+   user_id: string;
 }
-
 interface BillsState {
    pending: Bill[];
    overdue: Bill[];
@@ -45,7 +43,7 @@ export function Home() {
                .single();
 
             if (error) {
-               console.log('Erro ao buscar usuário:', error);
+               // console.log('Erro ao buscar usuário:', error);
                setNameUser('Caro Usuário');
                return;
             }
@@ -56,7 +54,7 @@ export function Home() {
                setNameUser('Caro Usuário');
             }
          } catch (error) {
-            console.log('Erro no fetchUser:', error);
+            // console.log('Erro no fetchUser:', error);
             setNameUser('Caro Usuário');
          }
       }
@@ -65,14 +63,14 @@ export function Home() {
    const fetchBills = async () => {
       try {
          setLoading(true);
-         console.log('🔄 Iniciando busca de contas...');
+         // console.log('🔄 Iniciando busca de contas...');
 
          if (!user?.id) {
-            console.log('❌ Usuário não disponível');
+            // console.log('❌ Usuário não disponível');
             return;
          }
 
-         console.log('👤 ID do usuário:', user.id);
+         // console.log('👤 ID do usuário:', user.id);
 
          const { data, error } = await supabase
             .from('bills')
@@ -81,11 +79,9 @@ export function Home() {
             .order('due_date', { ascending: true });
 
          if (error) {
-            console.log('❌ Erro ao buscar contas:', error);
+            // console.log('❌ Erro ao buscar contas:', error);
             return;
          }
-
-         console.log('✅ Dados recebidos do Supabase:', data);
 
          if (data && data.length > 0) {
             const pending = data.filter((bill) => bill.status === 'pending');
@@ -103,11 +99,9 @@ export function Home() {
    };
 
    useEffect(() => {
-      if (!user) {
-         return;
-      }
+      if (!user) return;
 
-      console.log('🚀 Usuário disponível, carregando dados...');
+      // console.log('🚀 Usuário disponível, carregando dados...');
 
       const loadData = async () => {
          await fetchUser();
@@ -115,11 +109,42 @@ export function Home() {
       };
 
       loadData();
+
+      const subscription = supabase // ouvir mudanças em tempo real do banco, e trazer novos dados
+         .channel('realtime-bills')
+         .on(
+            'postgres_changes',
+            {
+               event: '*',
+               schema: 'public',
+               table: 'bills',
+               filter: `user_id=eq.${user.id}`,
+            },
+            (payload) => {
+               if (
+                  payload.eventType === 'INSERT' ||
+                  payload.eventType === 'UPDATE' ||
+                  payload.eventType === 'DELETE'
+               ) {
+                  setBills((prev) => [...prev, payload.new]);
+               }
+            }
+         )
+         .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+               // console.log('📡 Subscrito ao canal realtime-bills');
+            }
+         });
+
+      // Cleanup do canal ao desmontar ou mudar o usuário
+      return () => {
+         supabase.removeChannel(subscription);
+      };
    }, [user]);
 
    if (loading) {
       return (
-         <SafeAreaView style={styles.container}>
+         <SafeAreaView style={styles.loading}>
             <Text>Carregando...</Text>
          </SafeAreaView>
       );
@@ -179,6 +204,7 @@ export function Home() {
                pendingData={bills.pending}
                overdueData={bills.overdue}
                paidData={bills.paid}
+               fetchBills={fetchBills}
             />
          </View>
       </SafeAreaView>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { styles } from './styles';
 import { Button } from '../../../components/Button';
@@ -7,14 +7,24 @@ interface Bill {
    id: string;
    name: string;
    amount: number;
+   status: 'pending' | 'overdue' | 'paid';
    due_date: Date;
+   user_id: string;
 }
 
 interface PaidListProps {
    data: Bill[];
+   fetchBills: () => Promise<void>;
 }
 
-export default function PaidList({ data }: PaidListProps) {
+export default function PaidList({ data, fetchBills }: PaidListProps) {
+   const [refreshing, setRefreshing] = useState(false);
+
+   const onRefresh = async () => {
+      setRefreshing(true);
+      await fetchBills(); // ou qualquer função que atualize os dados
+      setRefreshing(false);
+   };
    const renderItem = ({ item }: { item: Bill }) => (
       <View style={[styles.billCard, { borderLeftColor: '#23AEB8', borderLeftWidth: 4 }]}>
          <View style={styles.billHeader}>
@@ -42,6 +52,8 @@ export default function PaidList({ data }: PaidListProps) {
          keyExtractor={(item) => item.id}
          contentContainerStyle={styles.billsContainer}
          showsVerticalScrollIndicator={false}
+         refreshing={refreshing}
+         onRefresh={onRefresh}
          ListEmptyComponent={
             <Text style={{ textAlign: 'center', color: '#aaa', marginTop: 30 }}>
                Nenhuma conta paga

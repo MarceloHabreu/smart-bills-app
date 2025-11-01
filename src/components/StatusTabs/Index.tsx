@@ -1,11 +1,48 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { styles } from './styles';
 import OverdueList from '../../pages/Bills/OverdueList';
 import PaidList from '../../pages/Bills/PaidList';
 import PendingList from '../../pages/Bills/PendingList';
-export default function StatusTabs({ pendingData, overdueData, paidData }: any) {
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+interface Bill {
+   id: string;
+   name: string;
+   amount: number;
+   status: 'pending' | 'overdue' | 'paid';
+   due_date: Date;
+   user_id: string;
+}
+
+export default function StatusTabs({
+   pendingData,
+   overdueData,
+   paidData,
+   fetchBills,
+}: {
+   pendingData: Bill[];
+   overdueData: Bill[];
+   paidData: Bill[];
+   fetchBills: () => Promise<void>;
+}) {
    const [activeTab, setActiveTab] = useState('pending');
+   const handleTabChange = async (tabId: string) => {
+      setActiveTab(tabId); // muda visivelmente a aba e set o id da aba ativa
+      await AsyncStorage.setItem('activeTab', tabId); // salva localmente o id da aba ativa
+   };
+
+   useEffect(() => {
+      // ao ser usado um refresh da pagina
+      const loadActiveTab = async () => {
+         const savedTab = await AsyncStorage.getItem('activeTab'); // traz o id da aba salva localmente q o usuario estava por ultimo
+         if (savedTab) {
+            setActiveTab(savedTab); // seta o id da aba ativa novamente e mantém o usuário na mesma aba
+         }
+      };
+      loadActiveTab();
+   }, []);
+
    const tabs = [
       {
          id: 'pending',
@@ -31,7 +68,7 @@ export default function StatusTabs({ pendingData, overdueData, paidData }: any) 
                <TouchableOpacity
                   key={tab.id}
                   style={styles.tabItem}
-                  onPress={() => setActiveTab(tab.id)}
+                  onPress={() => handleTabChange(tab.id)}
                   activeOpacity={0.8}
                >
                   <View style={styles.tabInner}>
@@ -60,9 +97,9 @@ export default function StatusTabs({ pendingData, overdueData, paidData }: any) 
          </View>
          {/* --- TABS CONTENT (LISTAS) --- */}
          <View>
-            {activeTab === 'pending' && <PendingList data={pendingData} />}
-            {activeTab === 'overdue' && <OverdueList data={overdueData} />}
-            {activeTab === 'paid' && <PaidList data={paidData} />}
+            {activeTab === 'pending' && <PendingList data={pendingData} fetchBills={fetchBills} />}
+            {activeTab === 'overdue' && <OverdueList data={overdueData} fetchBills={fetchBills} />}
+            {activeTab === 'paid' && <PaidList data={paidData} fetchBills={fetchBills} />}
          </View>
       </View>
    );
