@@ -5,6 +5,12 @@ export const styles = StyleSheet.create({
       backgroundColor: '#fff',
       flex: 1,
    },
+   loading: {
+      backgroundColor: '#fff',
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+   },
    scrollView: {
       paddingHorizontal: 25,
       paddingVertical: 40,
