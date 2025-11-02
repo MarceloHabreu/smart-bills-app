@@ -11,7 +11,7 @@ interface Bill {
    name: string;
    amount: number;
    status: 'pending' | 'overdue' | 'paid';
-   due_date: Date;
+   due_date: string;
    user_id: string;
 }
 

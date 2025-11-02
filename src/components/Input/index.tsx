@@ -21,6 +21,7 @@ interface InputProps extends Omit<TextInputProps, 'ref'> {
    titleStyle?: StyleProp<TextStyle>;
    containerStyle?: StyleProp<ViewStyle>;
    inputStyle?: StyleProp<TextStyle>;
+   render?: (props: TextInputProps) => React.ReactNode;
 
    // Ícones como ReactNode (totalmente customizável)
    iconLeft?: React.ReactNode;
@@ -45,6 +46,7 @@ export const Input = forwardRef<TextInput, InputProps>(
          titleStyle,
          containerStyle,
          inputStyle,
+         render,
 
          iconLeft,
          onIconLeftPress,
@@ -113,22 +115,25 @@ export const Input = forwardRef<TextInput, InputProps>(
                )}
 
                {/* Input */}
-               <TextInput
-                  ref={ref}
-                  style={[
-                     styles.input,
-                     hasLeftIcon && styles.paddingLeft,
-                     hasRightIcon && styles.paddingRight,
-                     { height },
-                     inputStyle,
-                  ]}
-                  placeholderTextColor="#9CA3AF"
-                  editable={!disabled}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  {...rest}
-               />
-
+               {render ? (
+                  render({ ...rest, style: [styles.inputRender] })
+               ) : (
+                  <TextInput
+                     ref={ref}
+                     style={[
+                        styles.input,
+                        hasLeftIcon && styles.paddingLeft,
+                        hasRightIcon && styles.paddingRight,
+                        { height },
+                        inputStyle,
+                     ]}
+                     placeholderTextColor="#9CA3AF"
+                     editable={!disabled}
+                     onFocus={handleFocus}
+                     onBlur={handleBlur}
+                     {...rest}
+                  />
+               )}
                {/* Ícone Direito */}
                {hasRightIcon && (
                   <TouchableOpacity

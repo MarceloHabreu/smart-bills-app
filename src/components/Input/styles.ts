@@ -28,6 +28,13 @@ export const styles = StyleSheet.create({
       color: '#1F2937',
       paddingHorizontal: 16,
    },
+   inputRender: {
+      flex: 1,
+      fontFamily: fonts.body_poppins400,
+      fontSize: 14,
+      color: '#1F2937',
+      paddingHorizontal: 16,
+   },
    paddingLeft: {
       paddingLeft: 8,
    },

@@ -8,6 +8,7 @@ import { Image } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import StatusTabs from '../../components/StatusTabs/Index';
+import MaskInput from 'react-native-mask-input';
 
 interface Bill {
    id: string;
@@ -32,6 +33,42 @@ export function Home() {
       paid: [],
    });
    const [loading, setLoading] = useState(true);
+   const [searchName, setSearchName] = useState('');
+   const [startDate, setStartDate] = useState('');
+   const [endDate, setEndDate] = useState('');
+
+   const handleSearch = async () => {
+      if (!user?.id) return;
+
+      let query = supabase.from('bills').select('*').eq('user_id', user.id);
+
+      // Se o campo de busca por nome estiver preenchido, aplica filtro por nome (case-insensitive)
+      if (searchName.trim()) {
+         query = query.ilike('name', `%${searchName.trim()}%`);
+      }
+
+      if (startDate) {
+         // se preenchida faz a busca filtrando pela data inicial
+         const [day, month, year] = startDate.split('/'); // assumindo formato dd/mm/aaaa
+         query = query.gte('due_date', `${year}-${month}-${day}`); // buscando pelo formato aaaa-mm-dd
+      }
+
+      if (endDate) {
+         const [day, month, year] = endDate.split('/');
+         query = query.lte('due_date', `${year}-${month}-${day}`);
+      }
+
+      const { data, error } = await query.order('due_date', { ascending: true });
+      if (error) return;
+
+      // separa dados por status
+      const pending = data.filter((bill) => bill.status === 'pending');
+      const overdue = data.filter((bill) => bill.status === 'overdue');
+      const paid = data.filter((bill) => bill.status === 'paid');
+      setBills({ pending, overdue, paid });
+   };
+
+   const dateMask = [/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/];
 
    const fetchUser = async () => {
       if (user) {
@@ -166,7 +203,7 @@ export function Home() {
 
             {/* Campo de busca */}
             <View style={styles.searchContainer}>
-               <Input placeholder="Nome da conta" />
+               <Input placeholder="Nome da conta" onChangeText={setSearchName} />
             </View>
 
             {/* Filtros de data + botão */}
@@ -177,12 +214,28 @@ export function Home() {
                      width={200}
                      placeholder="dd/mm/aaaa"
                      iconRight={<EvilIcons name="calendar" size={24} color="#666" />}
+                     value={startDate}
+                     onChangeText={(masked, unmasked) => {
+                        setStartDate(masked);
+                     }}
+                     keyboardType="numeric"
+                     render={(props) => (
+                        <MaskInput {...props} mask={dateMask} placeholder="dd/mm/aaaa" />
+                     )}
                   />
                   <Input
                      title="Data Final:"
                      width={200}
                      placeholder="dd/mm/aaaa"
                      iconRight={<EvilIcons name="calendar" size={24} color="#666" />}
+                     value={endDate}
+                     onChangeText={(masked, unmasked) => {
+                        setEndDate(masked);
+                     }}
+                     keyboardType="numeric"
+                     render={(props) => (
+                        <MaskInput {...props} mask={dateMask} placeholder="dd/mm/aaaa" />
+                     )}
                   />
                </View>
 
@@ -195,6 +248,7 @@ export function Home() {
                      height={45}
                      borderRadius={12}
                      fontSize={16}
+                     onPress={handleSearch}
                   />
                </View>
             </View>
