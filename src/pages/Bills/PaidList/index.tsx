@@ -17,13 +17,6 @@ interface PaidListProps {
 }
 
 export default function PaidList({ data, fetchBills }: PaidListProps) {
-   const [refreshing, setRefreshing] = useState(false);
-
-   const onRefresh = async () => {
-      setRefreshing(true);
-      await fetchBills(); // ou qualquer função que atualize os dados
-      setRefreshing(false);
-   };
    const renderItem = ({ item }: { item: Bill }) => (
       <View style={[styles.billCard, { borderLeftColor: '#23AEB8', borderLeftWidth: 4 }]}>
          <View style={styles.billHeader}>
@@ -51,8 +44,6 @@ export default function PaidList({ data, fetchBills }: PaidListProps) {
          keyExtractor={(item) => item.id}
          contentContainerStyle={styles.billsContainer}
          showsVerticalScrollIndicator={false}
-         refreshing={refreshing}
-         onRefresh={onRefresh}
          ListEmptyComponent={
             <Text style={{ textAlign: 'center', color: '#aaa', marginTop: 30 }}>
                Nenhuma conta paga

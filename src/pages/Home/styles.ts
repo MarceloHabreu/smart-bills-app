@@ -11,10 +11,11 @@ export const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
    },
-   scrollView: {
-      paddingHorizontal: 25,
+   scrollContent: {
+      flexGrow: 1,
+      paddingHorizontal: 30,
       paddingVertical: 40,
-      flex: 1,
+      paddingBottom: 120, // espaço razoável no final
    },
 
    /** HEADER */
@@ -45,7 +46,7 @@ export const styles = StyleSheet.create({
    /** BUSCA E FILTROS */
    searchContainer: {
       marginTop: 15,
-      marginBottom: 65,
+      marginBottom: 10,
    },
    filterContainer: {
       justifyContent: 'space-between',
@@ -88,45 +89,5 @@ export const styles = StyleSheet.create({
       backgroundColor: '#E74C3C',
       borderRadius: 10,
       paddingHorizontal: 5,
-   },
-
-   /** CARDS */
-   billsContainer: {
-      gap: 15,
-      marginBottom: 140,
-   },
-   billCard: {
-      backgroundColor: '#fff',
-      padding: 15,
-      borderRadius: 15,
-      borderWidth: 1,
-      borderColor: '#E0E0E0',
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.05,
-      shadowRadius: 3,
-      elevation: 2,
-   },
-   billHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 8,
-   },
-   billType: {
-      fontSize: 16,
-      fontFamily: 'Poppins_600SemiBold',
-      color: '#1E1E1E',
-   },
-   billAmount: {
-      fontSize: 16,
-      fontFamily: 'Poppins_600SemiBold',
-      color: '#1E1E1E',
-   },
-   billDueDate: {
-      fontSize: 13,
-      color: '#8E8E8E',
-      fontFamily: 'Poppins_400Regular',
-      marginBottom: 10,
    },
 });

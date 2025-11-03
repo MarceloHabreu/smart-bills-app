@@ -19,13 +19,6 @@ interface OverdueListProps {
 }
 
 export default function OverdueList({ data, fetchBills }: OverdueListProps) {
-   const [refreshing, setRefreshing] = useState(false);
-
-   const onRefresh = async () => {
-      setRefreshing(true);
-      await fetchBills(); // ou qualquer função que atualize os dados
-      setRefreshing(false);
-   };
    const renderItem = ({ item }: { item: Bill }) => (
       <View style={[styles.billCard, { borderLeftColor: '#EF4444', borderLeftWidth: 4 }]}>
          <View style={styles.billHeader}>
@@ -53,8 +46,6 @@ export default function OverdueList({ data, fetchBills }: OverdueListProps) {
          keyExtractor={(item) => item.id}
          contentContainerStyle={styles.billsContainer}
          showsVerticalScrollIndicator={false}
-         refreshing={refreshing}
-         onRefresh={onRefresh}
          ListEmptyComponent={
             <Text style={{ textAlign: 'center', color: '#aaa', marginTop: 30 }}>
                Nenhuma conta atrasada

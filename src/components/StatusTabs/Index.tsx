@@ -81,14 +81,16 @@ export default function StatusTabs({
                         {tab.label}
                      </Text>
 
-                     <View
-                        style={[
-                           styles.badge,
-                           activeTab === tab.id ? styles.badgeActive : styles.badgeInactive,
-                        ]}
-                     >
-                        <Text style={styles.badgeText}>{tab.count}</Text>
-                     </View>
+                     {tab.count > 0 && (
+                        <View
+                           style={[
+                              styles.badge,
+                              activeTab === tab.id ? styles.badgeActive : styles.badgeInactive,
+                           ]}
+                        >
+                           <Text style={styles.badgeText}>{tab.count}</Text>
+                        </View>
+                     )}
                   </View>
 
                   {activeTab === tab.id && <View style={styles.underline} />}
