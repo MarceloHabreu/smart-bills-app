@@ -1,5 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView, ActivityIndicator } from 'react-native';
+import {
+   View,
+   Text,
+   ScrollView,
+   StyleSheet,
+   SafeAreaView,
+   ActivityIndicator,
+   FlatList,
+} from 'react-native';
 import { EvilIcons, Feather } from '@expo/vector-icons';
 import { styles } from './styles';
 import { Input } from '../../components/Input';
@@ -27,6 +35,7 @@ interface BillsState {
 export function Home() {
    const { setAuth, user } = useAuth();
    const [nameUser, setNameUser] = useState('');
+   const [refreshing, setRefreshing] = useState(false);
    const [bills, setBills] = useState<BillsState>({
       pending: [],
       overdue: [],
@@ -36,6 +45,12 @@ export function Home() {
    const [searchName, setSearchName] = useState('');
    const [startDate, setStartDate] = useState('');
    const [endDate, setEndDate] = useState('');
+
+   const onRefresh = async () => {
+      setRefreshing(true);
+      await fetchBills();
+      setRefreshing(false);
+   };
 
    const handleSearch = async () => {
       if (!user?.id) return;
@@ -189,78 +204,88 @@ export function Home() {
 
    return (
       <SafeAreaView style={styles.container}>
-         <View style={styles.scrollView}>
-            {/* Header */}
-            <View style={styles.header}>
-               <View>
-                  <Text style={styles.greeting} numberOfLines={1} ellipsizeMode="tail">
-                     Opa, {nameUser}👋
-                  </Text>
-                  <Text style={styles.subtitle}>Gerencie suas contas</Text>
-               </View>
-               <Image source={{ uri: 'https://i.pravatar.cc/100' }} style={styles.avatar} />
-            </View>
+         <FlatList
+            data={[]} // Array vazio - não vamos usar os dados aqui
+            renderItem={null}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            ListHeaderComponent={
+               <>
+                  {/* Header */}
+                  <View style={styles.header}>
+                     <View>
+                        <Text style={styles.greeting} numberOfLines={1} ellipsizeMode="tail">
+                           Opa, {nameUser}👋
+                        </Text>
+                        <Text style={styles.subtitle}>Gerencie suas contas</Text>
+                     </View>
+                     <Image source={{ uri: 'https://i.pravatar.cc/100' }} style={styles.avatar} />
+                  </View>
 
-            {/* Campo de busca */}
-            <View style={styles.searchContainer}>
-               <Input placeholder="Nome da conta" onChangeText={setSearchName} />
-            </View>
+                  {/* Campo de busca */}
+                  <View style={styles.searchContainer}>
+                     <Input placeholder="Nome da conta" onChangeText={setSearchName} />
+                  </View>
 
-            {/* Filtros de data + botão */}
-            <View style={styles.filterContainer}>
-               <View style={styles.dateInputs}>
-                  <Input
-                     title="Data Início:"
-                     width={200}
-                     placeholder="dd/mm/aaaa"
-                     iconRight={<EvilIcons name="calendar" size={24} color="#666" />}
-                     value={startDate}
-                     onChangeText={(masked, unmasked) => {
-                        setStartDate(masked);
-                     }}
-                     keyboardType="numeric"
-                     render={(props) => (
-                        <MaskInput {...props} mask={dateMask} placeholder="dd/mm/aaaa" />
-                     )}
-                  />
-                  <Input
-                     title="Data Final:"
-                     width={200}
-                     placeholder="dd/mm/aaaa"
-                     iconRight={<EvilIcons name="calendar" size={24} color="#666" />}
-                     value={endDate}
-                     onChangeText={(masked, unmasked) => {
-                        setEndDate(masked);
-                     }}
-                     keyboardType="numeric"
-                     render={(props) => (
-                        <MaskInput {...props} mask={dateMask} placeholder="dd/mm/aaaa" />
-                     )}
-                  />
-               </View>
+                  {/* Filtros de data + botão */}
+                  <View style={styles.filterContainer}>
+                     <View style={styles.dateInputs}>
+                        <Input
+                           title="Data Início:"
+                           width={200}
+                           placeholder="dd/mm/aaaa"
+                           iconRight={<EvilIcons name="calendar" size={24} color="#666" />}
+                           value={startDate}
+                           onChangeText={(masked, unmasked) => {
+                              setStartDate(masked);
+                           }}
+                           keyboardType="numeric"
+                           render={(props) => (
+                              <MaskInput {...props} mask={dateMask} placeholder="dd/mm/aaaa" />
+                           )}
+                        />
+                        <Input
+                           title="Data Final:"
+                           width={200}
+                           placeholder="dd/mm/aaaa"
+                           iconRight={<EvilIcons name="calendar" size={24} color="#666" />}
+                           value={endDate}
+                           onChangeText={(masked, unmasked) => {
+                              setEndDate(masked);
+                           }}
+                           keyboardType="numeric"
+                           render={(props) => (
+                              <MaskInput {...props} mask={dateMask} placeholder="dd/mm/aaaa" />
+                           )}
+                        />
+                     </View>
 
-               <View style={{ marginRight: 20 }}>
-                  <Button
-                     icon={<Feather name="search" size={18} color="#fff" />}
-                     text="Buscar"
-                     backgroundColor="#C3C83C"
-                     width={130}
-                     height={45}
-                     borderRadius={12}
-                     fontSize={16}
-                     onPress={handleSearch}
-                  />
-               </View>
-            </View>
-
-            {/* Tabs com dados reais */}
-            <StatusTabs
-               pendingData={bills.pending}
-               overdueData={bills.overdue}
-               paidData={bills.paid}
-               fetchBills={fetchBills}
-            />
-         </View>
+                     <View style={{ marginRight: 20 }}>
+                        <Button
+                           icon={<Feather name="search" size={18} color="#fff" />}
+                           text="Buscar"
+                           backgroundColor="#C3C83C"
+                           width={130}
+                           height={45}
+                           borderRadius={12}
+                           fontSize={16}
+                           onPress={handleSearch}
+                        />
+                     </View>
+                  </View>
+               </>
+            }
+            ListFooterComponent={
+               <StatusTabs
+                  pendingData={bills.pending}
+                  overdueData={bills.overdue}
+                  paidData={bills.paid}
+                  fetchBills={fetchBills}
+               />
+            }
+            showsVerticalScrollIndicator={true}
+            contentContainerStyle={styles.scrollContent}
+         />
       </SafeAreaView>
    );
 }
