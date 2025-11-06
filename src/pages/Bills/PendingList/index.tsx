@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Button } from '../../../components/Button';
-import { styles } from './styles';
 import { Feather } from '@expo/vector-icons';
+import { styles } from './styles';
+import { Button } from '../../../components/Button';
+import ModalPayment from '../../../components/ModalPayment';
 
 interface Bill {
    id: string;
@@ -12,6 +13,7 @@ interface Bill {
    due_date: string;
    user_id: string;
 }
+
 interface PendingListProps {
    data: Bill[];
    fetchBills: () => Promise<void>;
@@ -28,6 +30,8 @@ export default function PendingList({
    loadingMore = false,
 }: PendingListProps) {
    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
+   const [modalVisible, setModalVisible] = useState(false);
 
    const handleMenuToggle = (id: string) => {
       setOpenMenuId(openMenuId === id ? null : id);
@@ -45,14 +49,18 @@ export default function PendingList({
       console.log('Excluir:', bill);
       await fetchBills();
    };
-   // Função para carregar mais itens quando chegar no final
+
+   const handlePay = (bill: Bill) => {
+      setSelectedBill(bill);
+      setModalVisible(true);
+   };
+
    const handleEndReached = () => {
       if (hasMore && onLoadMore && !loadingMore) {
          onLoadMore();
       }
    };
 
-   // Componente de loading para paginação
    const renderFooter = () => {
       if (!loadingMore) return null;
 
@@ -83,6 +91,7 @@ export default function PendingList({
             </TouchableOpacity>
          </View>
 
+         {/* Botão de pagar */}
          <View style={{ marginTop: 12 }}>
             <Button
                text="Pagar"
@@ -91,6 +100,7 @@ export default function PendingList({
                height={40}
                borderRadius={10}
                fontSize={16}
+               onPress={() => handlePay(item)}
             />
          </View>
 
@@ -147,16 +157,25 @@ export default function PendingList({
    );
 
    return (
-      <FlatList
-         data={data}
-         renderItem={renderItem}
-         keyExtractor={(item) => item.id}
-         contentContainerStyle={styles.billsContainer}
-         showsVerticalScrollIndicator={true} // Mantém o indicador de rolagem
-         onEndReached={handleEndReached} // Chama quando chega no final
-         onEndReachedThreshold={0.1} // Carrega mais quando faltar 10% para o final
-         ListFooterComponent={renderFooter} // Loading no final
-         ListEmptyComponent={<Text style={styles.emptyText}>Nenhuma conta pendente</Text>}
-      />
+      <>
+         <FlatList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.billsContainer}
+            showsVerticalScrollIndicator={true}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.1}
+            ListFooterComponent={renderFooter}
+            ListEmptyComponent={<Text style={styles.emptyText}>Nenhuma conta pendente</Text>}
+         />
+
+         {/* Modal de Pagamento */}
+         <ModalPayment
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            bill={selectedBill}
+         />
+      </>
    );
 }

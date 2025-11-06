@@ -3,6 +3,7 @@ import colors from '../../../constants/colors';
 import { styles } from './styles';
 import { Button } from '../../../components/Button';
 import { useState } from 'react';
+import ModalPayment from '../../../components/ModalPayment';
 
 interface Bill {
    id: string;
@@ -19,6 +20,14 @@ interface OverdueListProps {
 }
 
 export default function OverdueList({ data, fetchBills }: OverdueListProps) {
+   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
+   const [modalVisible, setModalVisible] = useState(false);
+
+   const handlePay = (bill: Bill) => {
+      setSelectedBill(bill);
+      setModalVisible(true);
+   };
+
    const renderItem = ({ item }: { item: Bill }) => (
       <View style={[styles.billCard, { borderLeftColor: '#EF4444', borderLeftWidth: 4 }]}>
          <View style={styles.billHeader}>
@@ -35,22 +44,33 @@ export default function OverdueList({ data, fetchBills }: OverdueListProps) {
             height={40}
             borderRadius={10}
             fontSize={16}
+            onPress={() => {
+               handlePay(item);
+            }}
          />
       </View>
    );
 
    return (
-      <FlatList
-         data={data}
-         renderItem={renderItem}
-         keyExtractor={(item) => item.id}
-         contentContainerStyle={styles.billsContainer}
-         showsVerticalScrollIndicator={false}
-         ListEmptyComponent={
-            <Text style={{ textAlign: 'center', color: '#aaa', marginTop: 30 }}>
-               Nenhuma conta atrasada
-            </Text>
-         }
-      />
+      <>
+         <FlatList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.billsContainer}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+               <Text style={{ textAlign: 'center', color: '#aaa', marginTop: 30 }}>
+                  Nenhuma conta atrasada
+               </Text>
+            }
+         />
+         {/* Modal de Pagamento */}
+         <ModalPayment
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            bill={selectedBill}
+         />
+      </>
    );
 }
