@@ -2,18 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Modal, TouchableOpacity, View, Text, TouchableWithoutFeedback } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Button } from '../Button';
-import { fonts } from '../../fonts/fonts';
+import { fonts } from '@/fonts/fonts';
 import { styles } from './styles';
-import colors from '../../constants/colors';
-
-interface Bill {
-   id: string;
-   name: string;
-   amount: number;
-   status: 'pending' | 'overdue' | 'paid';
-   due_date: string;
-   user_id: string;
-}
+import colors from '@/constants/colors';
+import { Bill } from '@/interfaces';
 
 interface ModalPaymentProps {
    visible: boolean;

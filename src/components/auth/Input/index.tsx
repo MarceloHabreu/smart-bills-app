@@ -2,8 +2,8 @@ import { forwardRef, LegacyRef } from 'react';
 import { View, Text, TextInput, TextInputProps, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 import { FontAwesome, MaterialIcons, Octicons } from '@expo/vector-icons';
-import { fonts } from '../../../fonts/fonts';
-import colors from '../../../constants/colors';
+import { fonts } from '@/fonts/fonts';
+import colors from '@/constants/colors';
 
 type IconComponent =
    | React.ComponentType<React.ComponentProps<typeof MaterialIcons>>

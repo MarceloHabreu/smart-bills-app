@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { fonts } from '../../fonts/fonts';
+import { fonts } from '@/fonts/fonts';
 
 export const styles = StyleSheet.create({
    modalOverlay: {

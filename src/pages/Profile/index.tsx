@@ -1,7 +1,7 @@
 import { Alert, Text, View } from 'react-native';
-import { Button } from '../../components/auth/Button';
-import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
+import { Button } from '@/components/auth/Button';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function Profile() {
    const { setAuth, user } = useAuth();

@@ -12,8 +12,7 @@ import {
    NativeSyntheticEvent,
    TextInputFocusEventData,
 } from 'react-native';
-import colors from '../../constants/colors';
-import { fonts } from '../../fonts/fonts';
+import colors from '@/constants/colors';
 import { styles } from './styles';
 
 interface InputProps extends Omit<TextInputProps, 'ref'> {

@@ -9,14 +9,14 @@ import {
 } from 'react-native';
 
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
-import { Input } from '../../components/auth/Input';
-import { Button } from '../../components/auth/Button';
+import { Input } from '@/components/auth/Input';
+import { Button } from '@/components/auth/Button';
 import { styles } from './styles';
-import { HeaderBox } from '../../components/auth/HeaderBox';
-import { AuthRedirect } from '../../components/auth/AuthRedirect';
-import { supabase } from '../../lib/supabase';
+import { HeaderBox } from '@/components/auth/HeaderBox';
+import { AuthRedirect } from '@/components/auth/AuthRedirect';
+import { supabase } from '@/lib/supabase';
 import { NavigationProp, useNavigation } from '@react-navigation/core';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function Login() {
    const [email, setEmail] = useState('');

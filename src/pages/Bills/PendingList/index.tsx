@@ -2,17 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { styles } from './styles';
-import { Button } from '../../../components/Button';
-import ModalPayment from '../../../components/ModalPayment';
-
-interface Bill {
-   id: string;
-   name: string;
-   amount: number;
-   status: 'pending' | 'overdue' | 'paid';
-   due_date: string;
-   user_id: string;
-}
+import { Button } from '@/components/Button';
+import ModalPayment from '@/components/ModalPayment';
+import { Bill } from '@/interfaces';
 
 interface PendingListProps {
    data: Bill[];

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Octicons, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import colors from '../../constants/colors';
+import colors from '@/constants/colors';
 import { styles } from './styles';
 
 export default ({ state, navigation }: any) => {

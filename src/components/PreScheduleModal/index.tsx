@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { styles } from './styles';
-import colors from '../../constants/colors';
+import colors from '@/constants/colors';
 import { Button } from '../Button';
 
 interface PreScheduleModalProps {

@@ -1,5 +1,5 @@
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import colors from '../constants/colors';
+import colors from '@/constants/colors';
 
 export function Index() {
    return (

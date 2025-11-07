@@ -7,8 +7,8 @@ import {
    TouchableOpacityProps,
    ViewStyle,
 } from 'react-native';
-import colors from '../../constants/colors';
-import { fonts } from '../../fonts/fonts';
+import colors from '@/constants/colors';
+import { fonts } from '@/fonts/fonts';
 
 type Dimension = ViewStyle['width'];
 

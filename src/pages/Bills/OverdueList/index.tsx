@@ -1,18 +1,9 @@
 import { View, FlatList, Text } from 'react-native';
-import colors from '../../../constants/colors';
 import { styles } from './styles';
-import { Button } from '../../../components/Button';
+import { Button } from '@/components/Button';
 import { useState } from 'react';
-import ModalPayment from '../../../components/ModalPayment';
-
-interface Bill {
-   id: string;
-   name: string;
-   amount: number;
-   status: 'pending' | 'overdue' | 'paid';
-   due_date: string;
-   user_id: string;
-}
+import ModalPayment from '@/components/ModalPayment';
+import { Bill } from '@/interfaces';
 
 interface OverdueListProps {
    data: Bill[];

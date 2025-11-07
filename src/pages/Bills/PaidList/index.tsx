@@ -1,17 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { styles } from './styles';
-import { Button } from '../../../components/Button';
-import PreScheduleModal from '../../../components/PreScheduleModal';
+import { Button } from '@/components/Button';
+import PreScheduleModal from '@/components/PreScheduleModal';
+import { Bill } from '@/interfaces';
 
-interface Bill {
-   id: string;
-   name: string;
-   amount: number;
-   status: 'pending' | 'overdue' | 'paid';
-   due_date: string;
-   user_id: string;
-}
 interface PaidListProps {
    data: Bill[];
    fetchBills: () => Promise<void>;

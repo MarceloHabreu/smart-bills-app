@@ -10,22 +10,15 @@ import {
 } from 'react-native';
 import { EvilIcons, Feather } from '@expo/vector-icons';
 import { styles } from './styles';
-import { Input } from '../../components/Input';
-import { Button } from '../../components/Button';
+import { Input } from '@/components/Input';
+import { Button } from '@/components/Button';
 import { Image } from 'react-native';
-import { useAuth } from '../../contexts/AuthContext';
-import { supabase } from '../../lib/supabase';
-import StatusTabs from '../../components/StatusTabs/Index';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
+import StatusTabs from '@/components/StatusTabs/Index';
 import MaskInput from 'react-native-mask-input';
+import { Bill } from '@/interfaces';
 
-interface Bill {
-   id: string;
-   name: string;
-   amount: number;
-   status: 'pending' | 'overdue' | 'paid';
-   due_date: string;
-   user_id: string;
-}
 interface BillsState {
    pending: Bill[];
    overdue: Bill[];

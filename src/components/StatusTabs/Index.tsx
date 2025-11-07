@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { styles } from './styles';
-import OverdueList from '../../pages/Bills/OverdueList';
-import PaidList from '../../pages/Bills/PaidList';
-import PendingList from '../../pages/Bills/PendingList';
+import OverdueList from '@/pages/Bills/OverdueList';
+import PaidList from '@/pages/Bills/PaidList';
+import PendingList from '@/pages/Bills/PendingList';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Bill {

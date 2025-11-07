@@ -1,6 +1,5 @@
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { styles } from './styles';
-import Logo from '../../assets/smartbills_logo.png';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 type Props = {
