@@ -4,15 +4,18 @@ import { styles } from './styles';
 import { Button } from '@/components/Button';
 import PreScheduleModal from '@/components/PreScheduleModal';
 import { Bill } from '@/interfaces';
-import { deleteBill } from '@/services/billService';
+import { deleteBill, preScheduleBill } from '@/services/billService';
 import { Feather } from '@expo/vector-icons';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { BottomTabParamList } from '@/routes/types';
 
 interface PaidListProps {
    data: Bill[];
    fetchBills: () => Promise<void>;
+   navigation: BottomTabNavigationProp<BottomTabParamList>;
 }
 
-export default function PaidList({ data, fetchBills }: PaidListProps) {
+export default function PaidList({ data, fetchBills, navigation }: PaidListProps) {
    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
    const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
    const [modalVisible, setModalVisible] = useState(false);
@@ -22,24 +25,21 @@ export default function PaidList({ data, fetchBills }: PaidListProps) {
    };
 
    const handleView = (bill: Bill) => {
-      console.log('Visualizar:', bill);
+      navigation.navigate('BillsView', { bill });
    };
 
    const handleEdit = (bill: Bill) => {
-      console.log('Editar:', bill);
+      navigation.navigate('BillsEdit', { bill });
    };
 
    const handleDelete = async (bill: Bill) => {
       await deleteBill(bill.id);
       await fetchBills();
    };
-   const handlePreSchedule = (bill: Bill) => {
-      setSelectedBill(bill);
-      setModalVisible(true);
-   };
-   const handleSave = async (newDate: string) => {
-      console.log(`Conta ${selectedBill?.name} pré-agendada para ${newDate}`);
-      // Aqui você pode chamar sua API para atualizar a data
+
+   const handlePreSchedule = async (newDate: string) => {
+      if (!selectedBill) return;
+      await preScheduleBill(selectedBill.id, newDate || selectedBill.due_date);
       await fetchBills();
    };
 
@@ -53,7 +53,9 @@ export default function PaidList({ data, fetchBills }: PaidListProps) {
          {/* Linha Inferior: Due Date e 3 Pontinhos */}
          <View style={styles.bottomRow}>
             <Text style={styles.billDueDate}>
-               Vence em {item.due_date.split('-').reverse().join('/')}
+               Pago em {new Date(item.payment_date || '').toLocaleDateString('pt-BR')} às{' '}
+               {new Date(item.payment_date || '').getHours().toString().padStart(2, '0')}:
+               {new Date(item.payment_date || '').getMinutes().toString().padStart(2, '0')}
             </Text>
 
             <TouchableOpacity style={styles.menuButton} onPress={() => handleMenuToggle(item.id)}>
@@ -69,7 +71,10 @@ export default function PaidList({ data, fetchBills }: PaidListProps) {
                height={40}
                borderRadius={10}
                fontSize={16}
-               onPress={() => handlePreSchedule(item)}
+               onPress={() => {
+                  setSelectedBill(item);
+                  setModalVisible(true);
+               }}
             />
          </View>
          {/* Menu de opções */}
@@ -141,7 +146,7 @@ export default function PaidList({ data, fetchBills }: PaidListProps) {
          <PreScheduleModal
             visible={modalVisible}
             onClose={() => setModalVisible(false)}
-            onSave={handleSave}
+            onSave={handlePreSchedule}
             initialDate={selectedBill?.due_date}
          />
       </>

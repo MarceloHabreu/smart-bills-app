@@ -4,23 +4,25 @@ import { Button } from '@/components/Button';
 import { useState } from 'react';
 import ModalPayment from '@/components/ModalPayment';
 import { Bill } from '@/interfaces';
-import { deleteBill } from '@/services/billService';
+import { deleteBill, markAsPaid } from '@/services/billService';
 import { Feather } from '@expo/vector-icons';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { BottomTabParamList } from '@/routes/types';
 
 interface OverdueListProps {
    data: Bill[];
    fetchBills: () => Promise<void>;
+   navigation: BottomTabNavigationProp<BottomTabParamList>;
 }
 
-export default function OverdueList({ data, fetchBills }: OverdueListProps) {
+export default function OverdueList({ data, fetchBills, navigation }: OverdueListProps) {
    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
-
    const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
    const [modalVisible, setModalVisible] = useState(false);
-
-   const handlePay = (bill: Bill) => {
-      setSelectedBill(bill);
-      setModalVisible(true);
+   const handlePay = async (paymentDate: string) => {
+      if (!selectedBill) return;
+      await markAsPaid(selectedBill.id, paymentDate);
+      await fetchBills();
    };
 
    const handleMenuToggle = (id: string) => {
@@ -28,11 +30,11 @@ export default function OverdueList({ data, fetchBills }: OverdueListProps) {
    };
 
    const handleView = (bill: Bill) => {
-      console.log('Visualizar:', bill);
+      navigation.navigate('BillsView', { bill });
    };
 
    const handleEdit = (bill: Bill) => {
-      console.log('Editar:', bill);
+      navigation.navigate('BillsEdit', { bill });
    };
 
    const handleDelete = async (bill: Bill) => {
@@ -67,7 +69,8 @@ export default function OverdueList({ data, fetchBills }: OverdueListProps) {
                borderRadius={10}
                fontSize={16}
                onPress={() => {
-                  handlePay(item);
+                  setSelectedBill(item);
+                  setModalVisible(true);
                }}
             />
          </View>
@@ -143,6 +146,7 @@ export default function OverdueList({ data, fetchBills }: OverdueListProps) {
             visible={modalVisible}
             onClose={() => setModalVisible(false)}
             bill={selectedBill}
+            onSave={handlePay}
          />
       </>
    );

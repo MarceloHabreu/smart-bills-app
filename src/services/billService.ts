@@ -62,16 +62,69 @@ export async function fetchBillsByStatus(userId: string, status: Bill['status'])
 }
 
 /* Mark a bill as paid  */
+
 export async function markAsPaid(billId: string, paymentDate: string) {
    const { data, error } = await supabase
       .from('bills')
-      .update({ status: 'paid', payment_date: paymentDate, updated_at: new Date().toISOString() })
+      .update({
+         status: 'paid',
+         payment_date: paymentDate || new Date().toISOString(),
+         updated_at: new Date().toISOString(),
+      })
       .eq('id', billId);
 
    if (error) {
       console.log('Error to mark as paid: ', error);
       throw new Error(`Error marking bill as paid: ${error.message}`);
    }
+   return data;
+}
+
+/* Create a new bill */
+export async function createBill(
+   userId: string,
+   billData: Omit<Bill, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'status'>
+) {
+   const { data, error } = await supabase
+      .from('bills')
+      .insert([{ ...billData, user_id: userId, status: 'pending' }])
+      .select()
+      .single();
+
+   if (error) {
+      console.log('Error creating bill: ', error);
+      throw new Error(`Error creating bill: ${error.message}`);
+   }
+   if (!data) {
+      throw new Error('Failed to create bill');
+   }
+   return data;
+}
+
+/* Update an existing bill */
+export async function updateBill(billId: string, updates: Partial<Bill>) {
+   const { data, error } = await supabase
+      .from('bills')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', billId)
+      .select()
+      .single();
+
+   if (error) {
+      console.log('Error updating bill: ', error);
+      throw new Error(`Error updating bill: ${error.message}`);
+   }
+   return data;
+}
+
+export async function getBillById(billId: string) {
+   const { data, error } = await supabase.from('bills').select('*').eq('id', billId).single();
+
+   if (error) {
+      console.log('Error fetching bill by ID: ', error);
+      throw new Error(`Error fetching bill: ${error.message}`);
+   }
+   return data;
 }
 
 /* Delete a bill */
@@ -99,17 +152,6 @@ export async function preScheduleBill(billId: string, newDueDate: string) {
    if (fetchError || !bill) {
       console.log('Error fetching bill for pre-scheduling: ', fetchError);
       throw new Error(`Error fetching bill: ${fetchError?.message}`);
-   }
-
-   // Update the bill as paid
-   const { error: updateError } = await supabase
-      .from('bills')
-      .update({ status: 'paid', payment_date: new Date().toISOString().split('T')[0] })
-      .eq('id', billId);
-
-   if (updateError) {
-      console.log('Error marking bill as paid during pre-scheduling: ', updateError);
-      throw new Error(`Error marking bill as paid: ${updateError.message}`);
    }
    // Create a new bill with the new due date
    const { error: insertError } = await supabase.from('bills').insert([

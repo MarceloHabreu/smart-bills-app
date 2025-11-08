@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
    Modal,
    View,
@@ -34,10 +34,22 @@ export default function PreScheduleModal({
    };
 
    const handleSave = () => {
-      const formatted = date.toISOString().split('T')[0]; // yyyy-mm-dd
+      function formatDateLocal(date: Date): string {
+         return date.toLocaleDateString('en-CA'); // Formato yyyy-MM-dd
+      }
+      const formatted = formatDateLocal(date);
       onSave(formatted);
       onClose();
    };
+
+   useEffect(() => {
+      if (visible) {
+         const initial = initialDate ? new Date(initialDate) : new Date();
+         const suggested = new Date(initial);
+         suggested.setMonth(suggested.getMonth() + 1);
+         setDate(suggested);
+      }
+   }, [visible]);
 
    return (
       <Modal transparent visible={visible} animationType="fade">

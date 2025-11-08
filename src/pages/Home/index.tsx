@@ -1,13 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-   View,
-   Text,
-   ScrollView,
-   StyleSheet,
-   SafeAreaView,
-   ActivityIndicator,
-   FlatList,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, SafeAreaView, FlatList } from 'react-native';
 import { EvilIcons, Feather } from '@expo/vector-icons';
 import { styles } from './styles';
 import { Input } from '@/components/Input';

@@ -6,6 +6,9 @@ import PaidList from '@/pages/Bills/PaidList';
 import PendingList from '@/pages/Bills/PendingList';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Bill } from '@/interfaces';
+import { useNavigation } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { BottomTabParamList } from '@/routes/types';
 
 export default function StatusTabs({
    pendingData,
@@ -18,6 +21,8 @@ export default function StatusTabs({
    paidData: Bill[];
    fetchBills: () => Promise<void>;
 }) {
+   const navigation = useNavigation<BottomTabNavigationProp<BottomTabParamList>>();
+
    const [activeTab, setActiveTab] = useState('pending');
    const handleTabChange = async (tabId: string) => {
       setActiveTab(tabId); // muda visivelmente a aba e set o id da aba ativa
@@ -91,9 +96,15 @@ export default function StatusTabs({
          </View>
          {/* --- TABS CONTENT (LISTAS) --- */}
          <View>
-            {activeTab === 'pending' && <PendingList data={pendingData} fetchBills={fetchBills} />}
-            {activeTab === 'overdue' && <OverdueList data={overdueData} fetchBills={fetchBills} />}
-            {activeTab === 'paid' && <PaidList data={paidData} fetchBills={fetchBills} />}
+            {activeTab === 'pending' && (
+               <PendingList data={pendingData} fetchBills={fetchBills} navigation={navigation} />
+            )}
+            {activeTab === 'overdue' && (
+               <OverdueList data={overdueData} fetchBills={fetchBills} navigation={navigation} />
+            )}
+            {activeTab === 'paid' && (
+               <PaidList data={paidData} fetchBills={fetchBills} navigation={navigation} />
+            )}
          </View>
       </View>
    );

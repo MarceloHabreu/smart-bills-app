@@ -5,7 +5,9 @@ import { styles } from './styles';
 import { Button } from '@/components/Button';
 import ModalPayment from '@/components/ModalPayment';
 import { Bill } from '@/interfaces';
-import { deleteBill } from '@/services/billService';
+import { deleteBill, markAsPaid } from '@/services/billService';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { BottomTabParamList } from '@/routes/types';
 
 interface PendingListProps {
    data: Bill[];
@@ -13,6 +15,7 @@ interface PendingListProps {
    hasMore?: boolean;
    onLoadMore?: () => void;
    loadingMore?: boolean;
+   navigation: BottomTabNavigationProp<BottomTabParamList>;
 }
 
 export default function PendingList({
@@ -21,6 +24,7 @@ export default function PendingList({
    hasMore = false,
    onLoadMore,
    loadingMore = false,
+   navigation,
 }: PendingListProps) {
    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
    const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
@@ -31,11 +35,11 @@ export default function PendingList({
    };
 
    const handleView = (bill: Bill) => {
-      console.log('Visualizar:', bill);
+      navigation.navigate('BillsView', { bill });
    };
 
    const handleEdit = (bill: Bill) => {
-      console.log('Editar:', bill);
+      navigation.navigate('BillsEdit', { bill });
    };
 
    const handleDelete = async (bill: Bill) => {
@@ -43,9 +47,11 @@ export default function PendingList({
       await fetchBills();
    };
 
-   const handlePay = (bill: Bill) => {
-      setSelectedBill(bill);
-      setModalVisible(true);
+   const handleSave = async (paymentDate: string) => {
+      if (!selectedBill) return;
+      await markAsPaid(selectedBill.id, paymentDate);
+      await fetchBills();
+      setModalVisible(false);
    };
 
    const handleEndReached = () => {
@@ -93,7 +99,10 @@ export default function PendingList({
                height={40}
                borderRadius={10}
                fontSize={16}
-               onPress={() => handlePay(item)}
+               onPress={() => {
+                  setSelectedBill(item);
+                  setModalVisible(true);
+               }}
             />
          </View>
 
@@ -136,7 +145,9 @@ export default function PendingList({
                   style={styles.menuItem}
                   onPress={() => {
                      handleDelete(item);
-                     setOpenMenuId(null);
+                     {
+                        setOpenMenuId(null);
+                     }
                   }}
                >
                   <View style={[styles.menuIcon, { backgroundColor: '#FBEAEA' }]}>
@@ -167,6 +178,7 @@ export default function PendingList({
          <ModalPayment
             visible={modalVisible}
             onClose={() => setModalVisible(false)}
+            onSave={handleSave}
             bill={selectedBill}
          />
       </>

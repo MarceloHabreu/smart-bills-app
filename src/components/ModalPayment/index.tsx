@@ -11,9 +11,10 @@ interface ModalPaymentProps {
    visible: boolean;
    onClose: () => void;
    bill: Bill | null;
+   onSave: (paymentDate: string) => void;
 }
 
-export default function ModalPayment({ visible, onClose, bill }: ModalPaymentProps) {
+export default function ModalPayment({ visible, onClose, bill, onSave }: ModalPaymentProps) {
    const [date, setDate] = useState(new Date());
    const [time, setTime] = useState(new Date());
    const [showDatePicker, setShowDatePicker] = useState(false);
@@ -28,9 +29,15 @@ export default function ModalPayment({ visible, onClose, bill }: ModalPaymentPro
 
    const handleSave = () => {
       if (!bill) return;
-      console.log('Conta paga:', bill.name);
-      console.log('Data:', date.toLocaleDateString());
-      console.log('Hora:', time.toLocaleTimeString());
+      const combinedDate = new Date(
+         date.getFullYear(),
+         date.getMonth(),
+         date.getDate(),
+         time.getHours(),
+         time.getMinutes(),
+         0 // segundos zerados
+      );
+      onSave(combinedDate.toISOString());
       onClose();
    };
 
