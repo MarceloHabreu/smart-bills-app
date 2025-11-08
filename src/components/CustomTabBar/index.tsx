@@ -9,7 +9,8 @@ export default ({ state, navigation }: any) => {
       navigation.navigate(ScreenName);
    };
 
-   const isActive = (index: number) => state.index === index;
+   const currentRoute = state.routes[state.index]?.name;
+   const isActive = (routeName: string) => currentRoute === routeName;
 
    return (
       <View style={styles.tabArea}>
@@ -17,7 +18,7 @@ export default ({ state, navigation }: any) => {
          <TouchableOpacity style={styles.tabItem} onPress={() => go('Home')}>
             <View style={styles.iconContainer}>
                <Octicons name="home-fill" size={24} color="Black" />
-               {isActive(0) && <View style={styles.activeDot} />}
+               {isActive('Home') && <View style={styles.activeDot} />}
             </View>
          </TouchableOpacity>
 
@@ -25,25 +26,28 @@ export default ({ state, navigation }: any) => {
          <TouchableOpacity style={styles.tabItem} onPress={() => go('History')}>
             <View style={styles.iconContainer}>
                <Octicons name="history" size={24} color="Black" />
-               {isActive(1) && <View style={styles.activeDot} />}
+               {isActive('History') && <View style={styles.activeDot} />}
             </View>
          </TouchableOpacity>
 
          {/* CreateBill - Ícone maior */}
          <TouchableOpacity style={styles.tabItemCenter} onPress={() => go('BillsCreate')}>
-            <Ionicons
-               name="add-circle"
-               size={70}
-               color={colors.primary}
-               style={{ marginTop: -20 }}
-            />
+            <View style={styles.iconContainer}>
+               <Ionicons
+                  name="add-circle"
+                  size={70}
+                  color={colors.primary}
+                  style={{ marginTop: -20 }}
+               />
+               {isActive('BillsCreate') && <View style={styles.activeDot} />}
+            </View>
          </TouchableOpacity>
 
          {/* Dashboard */}
          <TouchableOpacity style={styles.tabItem} onPress={() => go('Dashboard')}>
             <View style={styles.iconContainer}>
                <MaterialCommunityIcons name="view-dashboard-outline" size={24} color="black" />
-               {isActive(3) && <View style={styles.activeDot} />}
+               {isActive('Dashboard') && <View style={styles.activeDot} />}
             </View>
          </TouchableOpacity>
 
@@ -51,7 +55,7 @@ export default ({ state, navigation }: any) => {
          <TouchableOpacity style={styles.tabItem} onPress={() => go('Profile')}>
             <View style={styles.iconContainer}>
                <Octicons name="person" size={24} color="Black" />
-               {isActive(4) && <View style={styles.activeDot} />}
+               {isActive('Profile') && <View style={styles.activeDot} />}
             </View>
          </TouchableOpacity>
       </View>
