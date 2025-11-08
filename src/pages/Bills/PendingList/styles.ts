@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import colors from '../../../constants/colors';
+import { fonts } from '@/fonts/fonts';
 
 export const styles = StyleSheet.create({
    container: {
@@ -44,19 +44,19 @@ export const styles = StyleSheet.create({
    },
    billType: {
       fontSize: 16,
-      fontFamily: 'Poppins_600SemiBold',
+      fontFamily: fonts.body_poppins600,
       color: '#1E1E1E',
       flex: 1,
    },
    billAmount: {
       fontSize: 16,
-      fontFamily: 'Poppins_600SemiBold',
+      fontFamily: fonts.body_poppins600,
       color: '#1E1E1E',
    },
    billDueDate: {
       fontSize: 14,
       color: '#6B7280',
-      fontFamily: 'Poppins_400Regular',
+      fontFamily: fonts.body_poppins400,
       flex: 1,
    },
 
@@ -119,7 +119,7 @@ export const styles = StyleSheet.create({
       textAlign: 'center',
       color: '#aaa',
       marginTop: 30,
-      fontFamily: 'Poppins_400Regular',
+      fontFamily: fonts.body_poppins400,
    },
 
    // Paginação styles
@@ -133,6 +133,6 @@ export const styles = StyleSheet.create({
    footerText: {
       fontSize: 14,
       color: '#666',
-      fontFamily: 'Poppins_400Regular',
+      fontFamily: fonts.body_poppins400,
    },
 });

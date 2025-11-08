@@ -18,6 +18,8 @@ import { supabase } from '@/lib/supabase';
 import StatusTabs from '@/components/StatusTabs/Index';
 import MaskInput from 'react-native-mask-input';
 import { Bill } from '@/interfaces';
+import { fetchBillsByStatus, searchBills } from '@/services/billService';
+import { fetchUserName } from '@/services/userService';
 
 interface BillsState {
    pending: Bill[];
@@ -47,97 +49,38 @@ export function Home() {
 
    const handleSearch = async () => {
       if (!user?.id) return;
-
-      let query = supabase.from('bills').select('*').eq('user_id', user.id);
-
-      // Se o campo de busca por nome estiver preenchido, aplica filtro por nome (case-insensitive)
-      if (searchName.trim()) {
-         query = query.ilike('name', `%${searchName.trim()}%`);
-      }
-
-      if (startDate) {
-         // se preenchida faz a busca filtrando pela data inicial
-         const [day, month, year] = startDate.split('/'); // assumindo formato dd/mm/aaaa
-         query = query.gte('due_date', `${year}-${month}-${day}`); // buscando pelo formato aaaa-mm-dd
-      }
-
-      if (endDate) {
-         const [day, month, year] = endDate.split('/');
-         query = query.lte('due_date', `${year}-${month}-${day}`);
-      }
-
-      const { data, error } = await query.order('due_date', { ascending: true });
-      if (error) return;
-
-      // separa dados por status
-      const pending = data.filter((bill) => bill.status === 'pending');
-      const overdue = data.filter((bill) => bill.status === 'overdue');
-      const paid = data.filter((bill) => bill.status === 'paid');
+      const { pending, overdue, paid } = await searchBills({
+         userId: user.id,
+         searchName,
+         startDate,
+         endDate,
+      });
       setBills({ pending, overdue, paid });
    };
 
    const dateMask = [/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/];
 
    const fetchUser = async () => {
-      if (user) {
-         try {
-            const { data, error } = await supabase
-               .from('users')
-               .select('name')
-               .eq('id', user.id)
-               .single();
-
-            if (error) {
-               // console.log('Erro ao buscar usuário:', error);
-               setNameUser('Caro Usuário');
-               return;
-            }
-
-            if (data) {
-               setNameUser(data.name);
-            } else {
-               setNameUser('Caro Usuário');
-            }
-         } catch (error) {
-            // console.log('Erro no fetchUser:', error);
-            setNameUser('Caro Usuário');
-         }
-      }
+      if (!user?.id) return;
+      const name = await fetchUserName(user.id);
+      setNameUser(name);
    };
 
    const fetchBills = async () => {
       try {
          setLoading(true);
-         // console.log('🔄 Iniciando busca de contas...');
 
          if (!user?.id) {
-            // console.log('❌ Usuário não disponível');
             return;
          }
-
-         // console.log('👤 ID do usuário:', user.id);
-
-         const { data, error } = await supabase
-            .from('bills')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('due_date', { ascending: true });
-
-         if (error) {
-            // console.log('❌ Erro ao buscar contas:', error);
-            return;
-         }
-
-         if (data && data.length > 0) {
-            const pending = data.filter((bill) => bill.status === 'pending');
-            const overdue = data.filter((bill) => bill.status === 'overdue');
-            const paid = data.filter((bill) => bill.status === 'paid');
-
-            setBills({ pending, overdue, paid });
-         } else {
-            setBills({ pending: [], overdue: [], paid: [] });
-         }
+         const [pending, overdue, paid] = await Promise.all([
+            fetchBillsByStatus(user.id, 'pending'),
+            fetchBillsByStatus(user.id, 'overdue'),
+            fetchBillsByStatus(user.id, 'paid'),
+         ]);
+         setBills({ pending, overdue, paid });
       } catch (error) {
+         console.log('Erro ao buscar contas:', error);
       } finally {
          setLoading(false);
       }
@@ -145,9 +88,6 @@ export function Home() {
 
    useEffect(() => {
       if (!user) return;
-
-      // console.log('🚀 Usuário disponível, carregando dados...');
-
       const loadData = async () => {
          await fetchUser();
          await fetchBills();

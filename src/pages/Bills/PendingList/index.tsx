@@ -5,6 +5,7 @@ import { styles } from './styles';
 import { Button } from '@/components/Button';
 import ModalPayment from '@/components/ModalPayment';
 import { Bill } from '@/interfaces';
+import { deleteBill } from '@/services/billService';
 
 interface PendingListProps {
    data: Bill[];
@@ -38,7 +39,7 @@ export default function PendingList({
    };
 
    const handleDelete = async (bill: Bill) => {
-      console.log('Excluir:', bill);
+      await deleteBill(bill.id);
       await fetchBills();
    };
 

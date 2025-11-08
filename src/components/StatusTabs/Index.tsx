@@ -5,15 +5,7 @@ import OverdueList from '@/pages/Bills/OverdueList';
 import PaidList from '@/pages/Bills/PaidList';
 import PendingList from '@/pages/Bills/PendingList';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-interface Bill {
-   id: string;
-   name: string;
-   amount: number;
-   status: 'pending' | 'overdue' | 'paid';
-   due_date: string;
-   user_id: string;
-}
+import { Bill } from '@/interfaces';
 
 export default function StatusTabs({
    pendingData,
