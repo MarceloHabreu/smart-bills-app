@@ -1,8 +1,9 @@
+import colors from '@/constants/colors';
+import { fonts } from '@/fonts/fonts';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
    container: {
-      backgroundColor: '#fff',
       flex: 1,
    },
    loading: {
@@ -13,8 +14,8 @@ export const styles = StyleSheet.create({
    },
    scrollContent: {
       flexGrow: 1,
-      paddingHorizontal: 30,
-      paddingVertical: 40,
+      paddingHorizontal: 25,
+      paddingVertical: 50,
       paddingBottom: 120, // espaço razoável no final
    },
 
@@ -22,42 +23,67 @@ export const styles = StyleSheet.create({
    header: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      alignItems: 'center',
-      marginTop: 20,
+
+      /* marginTop: 20, */
       marginBottom: 10,
    },
    greeting: {
+      textAlign: 'left',
       fontSize: 30,
       color: '#1E1E1E',
-      maxWidth: '94%',
       fontFamily: 'Poppins_600SemiBold',
    },
    subtitle: {
+      textAlign: 'left',
       fontSize: 20,
-      color: '#8E8E8E',
+      color: colors.gray,
+      /* marginTop: -6, */
+      marginTop: 1,
+      marginBottom: 10,
       fontFamily: 'Poppins_400Regular',
    },
    avatar: {
       width: 45,
       height: 45,
       borderRadius: 25,
+      marginTop: 5,
    },
 
    /** BUSCA E FILTROS */
    searchContainer: {
-      marginTop: 15,
-      marginBottom: 10,
+      marginTop: 10,
    },
    filterContainer: {
-      justifyContent: 'space-between',
-      alignItems: 'flex-end',
-      marginTop: 20,
-      marginBottom: 10,
-      gap: 15,
+      marginTop: 10,
+      marginRight: 10,
    },
    dateInputs: {
-      flexDirection: 'row',
+      flexDirection: 'column',
       gap: 10,
+   },
+
+   title: {
+      fontSize: 22,
+      fontWeight: '600',
+      textAlign: 'center',
+      color: '#0C2E5C',
+      marginBottom: 24,
+   },
+   label: {
+      fontFamily: fonts.body_poppins600,
+      fontSize: 14,
+      color: colors.gray_text,
+      marginBottom: 5,
+   },
+   input: {
+      borderWidth: 1,
+      borderColor: '#ccc',
+      borderRadius: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      fontSize: 16,
+      color: '#333',
+      marginBottom: 16,
    },
 
    /** TABS */

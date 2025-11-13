@@ -5,6 +5,7 @@ export interface Bill {
    status: 'pending' | 'overdue' | 'paid';
    due_date: string;
    payment_date?: string | null;
+   description?: string;
    user_id: string;
    created_at?: string;
    updated_at?: string;

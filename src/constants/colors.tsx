@@ -9,8 +9,9 @@ export default {
    red: '#F44336',
    gray: '#888888',
    dark: '#333333',
-   yellowSearch: '#B3B823',
+   yellow: '#F4BF13',
    error: '#EF4444',
+   gray_text: '#374151',
 };
 
 // f2 para selecionar e mudar os nomes em diferentes arquivos

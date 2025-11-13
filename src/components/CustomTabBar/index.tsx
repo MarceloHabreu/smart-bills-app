@@ -37,7 +37,7 @@ export default ({ state, navigation }: any) => {
                   name="add-circle"
                   size={70}
                   color={colors.primary}
-                  style={{ marginTop: -20 }}
+                  style={{ marginTop: -30 }}
                />
                {isActive('BillsCreate') && <View style={styles.activeDot} />}
             </View>

@@ -3,11 +3,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Profile } from '../pages/Profile';
 import { Home } from '../pages/Home';
 import CustomTabBar from '../components/CustomTabBar';
-import { History } from '../pages/History';
 import { BillsCreate } from '../pages/Bills/Create';
 import { Dashboard } from '../pages/Dashboard';
 import { BillsEdit } from '@/pages/Bills/Edit';
 import { BillsView } from '@/pages/Bills/View';
+import { HistoryPayments } from '@/pages/History';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,7 +24,7 @@ export default function BottomRoutes() {
          tabBar={(props) => <CustomTabBar {...props} />}
       >
          <Tab.Screen name="Home" component={Home} />
-         <Tab.Screen name="History" component={History} />
+         <Tab.Screen name="History" component={HistoryPayments} />
          <Tab.Screen name="BillsCreate" component={BillsCreate} />
          <Tab.Screen name="BillsEdit" component={BillsEdit} />
          <Tab.Screen name="BillsView" component={BillsView} />

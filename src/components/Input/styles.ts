@@ -10,15 +10,17 @@ export const styles = StyleSheet.create({
    title: {
       fontFamily: fonts.body_poppins600,
       fontSize: 14,
-      color: colors.gray || '#374151',
-      marginBottom: 8,
+      color: colors.gray_text,
+      marginBottom: 5,
    },
    inputContainer: {
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: 'transparent',
       borderWidth: 2,
-      borderRadius: 16,
+      borderRadius: 12,
+      borderColor: '#ccc',
+
       overflow: 'hidden',
    },
    input: {
@@ -26,13 +28,15 @@ export const styles = StyleSheet.create({
       fontFamily: fonts.body_poppins400,
       fontSize: 16,
       color: '#1F2937',
+
       paddingHorizontal: 16,
    },
+
    inputRender: {
       flex: 1,
-      fontFamily: fonts.body_poppins400,
+      fontFamily: fonts.body_poppins500,
       fontSize: 14,
-      color: '#1F2937',
+      color: colors.gray_text,
       paddingHorizontal: 16,
    },
    paddingLeft: {

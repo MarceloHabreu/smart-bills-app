@@ -12,6 +12,7 @@ import MaskInput from 'react-native-mask-input';
 import { Bill } from '@/interfaces';
 import { fetchBillsByStatus, searchBills } from '@/services/billService';
 import { fetchUserName } from '@/services/userService';
+import colors from '@/constants/colors';
 
 interface BillsState {
    pending: Bill[];
@@ -130,7 +131,7 @@ export function Home() {
    return (
       <SafeAreaView style={styles.container}>
          <FlatList
-            data={[]} // Array vazio - não vamos usar os dados aqui
+            data={[]}
             renderItem={null}
             refreshing={refreshing}
             onRefresh={onRefresh}
@@ -139,17 +140,23 @@ export function Home() {
                   {/* Header */}
                   <View style={styles.header}>
                      <View>
-                        <Text style={styles.greeting} numberOfLines={1} ellipsizeMode="tail">
-                           Opa, {nameUser}👋
-                        </Text>
-                        <Text style={styles.subtitle}>Gerencie suas contas</Text>
+                        <Text style={styles.greeting}>Olá, {nameUser}</Text>
                      </View>
-                     <Image source={{ uri: 'https://i.pravatar.cc/100' }} style={styles.avatar} />
+                     <Image
+                        source={{ uri: user?.user_metadata.avatar_url }}
+                        style={styles.avatar}
+                     />
                   </View>
+                  {/*  Organize suas contas.{'\n'}Simplifique sua vida */}
+                  <Text style={styles.subtitle}>Área de Gerenciamento</Text>
 
                   {/* Campo de busca */}
                   <View style={styles.searchContainer}>
-                     <Input placeholder="Nome da conta" onChangeText={setSearchName} />
+                     <Input
+                        title="Nome da Conta:"
+                        placeholder="Digite o nome da conta..."
+                        onChangeText={setSearchName}
+                     />
                   </View>
 
                   {/* Filtros de data + botão */}
@@ -157,8 +164,9 @@ export function Home() {
                      <View style={styles.dateInputs}>
                         <Input
                            title="Data Início:"
-                           width={200}
+                           width={'100%'}
                            placeholder="dd/mm/aaaa"
+                           placeholderTextColor="#9CA3AF"
                            iconRight={<EvilIcons name="calendar" size={24} color="#666" />}
                            value={startDate}
                            onChangeText={(masked, unmasked) => {
@@ -171,8 +179,9 @@ export function Home() {
                         />
                         <Input
                            title="Data Final:"
-                           width={200}
+                           width={'100%'}
                            placeholder="dd/mm/aaaa"
+                           placeholderTextColor="#9CA3AF"
                            iconRight={<EvilIcons name="calendar" size={24} color="#666" />}
                            value={endDate}
                            onChangeText={(masked, unmasked) => {
@@ -185,13 +194,13 @@ export function Home() {
                         />
                      </View>
 
-                     <View style={{ marginRight: 20 }}>
+                     <View style={{ marginTop: 15, marginBottom: 15, alignItems: 'flex-end' }}>
                         <Button
                            icon={<Feather name="search" size={18} color="#fff" />}
                            text="Buscar"
-                           backgroundColor="#C3C83C"
+                           backgroundColor="#B3B823" /* 9ca3af */ /* #222222 */
                            width={130}
-                           height={45}
+                           height={40}
                            borderRadius={12}
                            fontSize={16}
                            onPress={handleSearch}

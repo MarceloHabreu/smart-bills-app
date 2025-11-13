@@ -28,9 +28,9 @@ export default function PaidList({ data, fetchBills, navigation }: PaidListProps
       navigation.navigate('BillsView', { bill });
    };
 
-   const handleEdit = (bill: Bill) => {
+   /*  const handleEdit = (bill: Bill) => {
       navigation.navigate('BillsEdit', { bill });
-   };
+   }; */
 
    const handleDelete = async (bill: Bill) => {
       await deleteBill(bill.id);
@@ -97,7 +97,7 @@ export default function PaidList({ data, fetchBills, navigation }: PaidListProps
 
                <View style={styles.menuDivider} />
 
-               <TouchableOpacity
+               {/* <TouchableOpacity
                   style={styles.menuItem}
                   onPress={() => {
                      handleEdit(item);
@@ -108,7 +108,7 @@ export default function PaidList({ data, fetchBills, navigation }: PaidListProps
                      <Feather name="edit-2" size={16} color="#F39C12" />
                   </View>
                   <Text style={styles.menuText}>Editar</Text>
-               </TouchableOpacity>
+               </TouchableOpacity> */}
 
                <View style={styles.menuDivider} />
 
