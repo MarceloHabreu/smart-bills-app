@@ -49,52 +49,68 @@ export const styles = StyleSheet.create({
       paddingHorizontal: 20,
    },
    card: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
       backgroundColor: '#fff',
       borderRadius: 14,
       padding: 16,
       marginBottom: 12,
       marginHorizontal: 16,
       shadowColor: '#000',
-      shadowOpacity: 0.1,
-      shadowRadius: 6,
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
       shadowOffset: { width: 0, height: 2 },
-      elevation: 3,
+      elevation: 2,
       borderWidth: 1,
       borderColor: '#f0f0f0',
    },
-   cardLeft: {
+
+   cardTop: {
       flexDirection: 'row',
+      justifyContent: 'space-between',
       alignItems: 'center',
-      gap: 12,
+      marginBottom: 8,
    },
-   iconCircle: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: '#E8F5E9',
-      alignItems: 'center',
-      justifyContent: 'center',
+
+   cardInfo: {
+      flex: 1,
    },
-   cardRight: {
-      alignItems: 'flex-end',
-   },
-   paymentName: {
+
+   cardTitle: {
       fontSize: 16,
       fontWeight: '600',
       color: '#333',
    },
-   paymentDate: {
+
+   cardSub: {
       fontSize: 13,
       color: '#888',
       marginTop: 2,
    },
-   paymentAmount: {
+
+   iconCircle: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: '#E8F5E9',
+      alignItems: 'center',
+      justifyContent: 'center',
+   },
+
+   cardBottom: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+   },
+
+   cardAmount: {
       fontSize: 16,
       fontWeight: '600',
       color: '#e53935',
+   },
+
+   cardTag: {
+      fontSize: 13,
+      color: '#4caf50',
+      fontWeight: '500',
    },
    paymentStatus: {
       fontSize: 12,

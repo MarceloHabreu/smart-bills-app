@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
-import { styles } from './styles';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import colors from '@/constants/colors';
 import { Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { styles } from './styles';
 
 export function HistoryPayments() {
    const { user } = useAuth();
@@ -21,8 +22,12 @@ export function HistoryPayments() {
       else fromDate.setDate(fromDate.getDate() - 1); // 24h
 
       const { data, error } = await supabase
-         .from('payments') // substitua pelo nome da sua tabela
-         .select('*')
+         .from('payments')
+         .select(
+            `
+             *,
+              bills (name)`
+         )
          .eq('user_id', user?.id)
          .gte('payment_date', fromDate.toISOString())
          .order('payment_date', { ascending: false });
@@ -99,23 +104,31 @@ export function HistoryPayments() {
                <Text style={styles.emptyText}>Nenhum pagamento encontrado.</Text>
             ) : (
                payments.map((item) => (
-                  <View key={item.id} style={styles.card}>
-                     <View style={styles.cardHeader}>
-                        <Text style={styles.paymentName}>{item.name}</Text>
-                        <Text style={styles.paymentDate}>
-                           {new Date(item.payment_date).toLocaleDateString()} •{' '}
-                           {new Date(item.payment_date).toLocaleTimeString([], {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                           })}
-                        </Text>
+                  <View style={styles.card}>
+                     {/* Linha superior */}
+                     <View style={styles.cardTop}>
+                        <View style={styles.cardInfo}>
+                           <Text style={styles.cardTitle}>{item.bills.name}</Text>
+                           <Text style={styles.cardSub}>
+                              Pago em {new Date(item.payment_date).toLocaleDateString('pt-BR')} •{' '}
+                              {new Date(item.payment_date).toLocaleTimeString(['pt-BR'], {
+                                 hour: '2-digit',
+                                 minute: '2-digit',
+                              })}
+                           </Text>
+                        </View>
+
+                        <View style={styles.iconCircle}>
+                           <Ionicons name="checkmark-circle" size={24} color="#2ecc71" />
+                        </View>
                      </View>
 
-                     <View style={styles.cardFooter}>
-                        <Text style={styles.paymentAmount}>
-                           -R$ {item.amount.toFixed(2).replace('.', ',')}
+                     {/* Linha inferior */}
+                     <View style={styles.cardBottom}>
+                        <Text style={styles.cardAmount}>
+                           - R$ {item.amount.toFixed(2).replace('.', ',')}
                         </Text>
-                        <Text style={styles.paymentStatus}>Prestação Paga</Text>
+                        <Text style={styles.cardTag}>Pagamento confirmado</Text>
                      </View>
                   </View>
                ))
