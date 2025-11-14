@@ -1,154 +1,210 @@
 import React, { useState } from 'react';
 import {
+   KeyboardAvoidingView,
+   ScrollView,
    View,
    Text,
-   TextInput,
-   TouchableOpacity,
    Image,
-   Alert,
-   KeyboardAvoidingView,
+   TouchableOpacity,
    Platform,
-   ScrollView,
-   RefreshControl,
+   Alert,
+   ActivityIndicator,
+   TextInput,
 } from 'react-native';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
-import { styles } from './styles';
-import colors from '@/constants/colors';
-import { ArrowLeft } from 'lucide-react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Button } from '@/components/Button';
+import { RefreshControl } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { decode } from 'base64-arraybuffer';
+import * as ImageManipulator from 'expo-image-manipulator';
+import { MaterialIcons } from '@expo/vector-icons';
+import { supabase } from '@/lib/supabase';
+import colors from '@/constants/colors';
+import { Button } from '@/components/Button';
+import { useAuth } from '@/contexts/AuthContext';
+import { styles } from './styles';
+import { updateProfile } from '@/services/userService';
 
 export function Profile() {
    const { user, setAuth } = useAuth();
-   const navigation = useNavigation();
-
    const [name, setName] = useState(user?.user_metadata?.name || '');
    const [email, setEmail] = useState(user?.email || '');
    const [newPassword, setNewPassword] = useState('');
    const [oldPassword, setOldPassword] = useState('');
    const [refreshing, setRefreshing] = useState(false);
+   const [uploading, setUploading] = useState(false);
+   const [avatarUrl, setAvatarUrl] = useState(user?.user_metadata?.avatar_url || '');
 
+   // Atualiza avatar localmente quando user mudar
+   React.useEffect(() => {
+      setAvatarUrl(user?.user_metadata?.avatar_url || '');
+   }, [user?.user_metadata?.avatar_url]);
+
+   // Refresh
    async function onRefresh() {
       setRefreshing(true);
       const { data, error } = await supabase.auth.getUser();
-
-      if (error) {
-         Alert.alert('Erro', 'Não foi possível atualizar as informações.');
-      } else {
+      if (!error && data.user) {
          setAuth(data.user);
-         setName(data.user?.user_metadata?.name || '');
-         setEmail(data.user?.email || '');
-         setOldPassword('');
+         setName(data.user.user_metadata?.name || '');
+         setEmail(data.user.email || '');
+         setAvatarUrl(data.user.user_metadata?.avatar_url || '');
       }
-
       setRefreshing(false);
    }
 
+   // Atualizar perfil
    async function handleUpdate() {
       if (!name || !email || !oldPassword) {
-         Alert.alert('Campos obrigatórios', 'Preencha os campos nome, email e senha atual.');
+         Alert.alert('Campos obrigatórios', 'Preencha nome, e-mail e senha atual.');
+         return;
+      }
+
+      if (newPassword && newPassword.length < 8) {
+         Alert.alert('Erro', 'A nova senha deve ter pelo menos 8 caracteres.');
+         return;
+      }
+
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
+         Alert.alert('Erro', 'E-mail inválido.');
          return;
       }
 
       try {
+         // 1. Revalida senha atual
          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email: user.email,
+            email: user?.email!,
             password: oldPassword,
          });
+         if (signInError) throw new Error('Senha atual incorreta.');
 
-         if (signInError) {
-            Alert.alert('Erro', 'Senha atual incorreta.');
-            return;
+         // 2. Monta update SEM email se for igual
+         const updates: any = { data: { name } };
+
+         if (email !== user?.email) {
+            updates.email = email;
          }
-
-         const updates: any = {
-            email,
-            data: { name },
-         };
 
          if (newPassword) {
             updates.password = newPassword;
          }
 
+         console.log('Enviando update:', updates);
+
          const { error: updateError } = await supabase.auth.updateUser(updates);
+
          if (updateError) {
-            Alert.alert('Erro', 'Falha ao atualizar o perfil.');
-            return;
-         }
-         // 🔹 Atualiza também a tabela de perfis (se você tiver uma)
-         const { error: profileError } = await supabase
-            .from('users') // ou o nome da sua tabela
-            .update({ name })
-            .eq('id', user?.id);
-
-         if (profileError) {
-            console.log('Erro ao atualizar tabela de perfil:', profileError);
+            console.log('Erro do Supabase:', updateError);
+            throw updateError;
          }
 
-         // 🔄 Atualiza o contexto e estados locais
+         // 3. Atualiza contexto
          const { data: fresh } = await supabase.auth.getUser();
          setAuth(fresh.user);
-         setName(fresh.user?.user_metadata?.name || '');
-         setEmail(fresh.user?.email || '');
          setNewPassword('');
          setOldPassword('');
-
-         Alert.alert('✅ Sucesso', 'Perfil atualizado com sucesso!');
-         console.log(fresh);
+         Alert.alert('Sucesso', 'Perfil atualizado com sucesso!');
       } catch (err: any) {
-         Alert.alert('Erro', err.message || 'Falha ao atualizar o perfil.');
+         console.log('ERRO FINAL:', {
+            message: err.message,
+            status: err.status,
+            name: err.name,
+            __isAuthError: err.__isAuthError,
+         });
+         Alert.alert('Erro', err.message || 'Falha ao atualizar perfil.');
       }
    }
-
-   async function handleSignout() {
-      const { error } = await supabase.auth.signOut();
-      setAuth(null);
-
-      if (error) {
-         Alert.alert('Erro', 'Erro ao sair da conta, tente novamente mais tarde.');
-      }
+   // Remover foto
+   async function handleRemoveAvatar() {
+      Alert.alert('Remover foto', 'Tem certeza que deseja remover sua foto de perfil?', [
+         { text: 'Cancelar', style: 'cancel' },
+         {
+            text: 'Remover',
+            style: 'destructive',
+            onPress: async () => {
+               setUploading(true);
+               const filePath = `avatars/${user?.id}.jpg`;
+               await supabase.storage.from('avatars').remove([filePath]);
+               await supabase.auth.updateUser({ data: { avatar_url: null } });
+               const { data: fresh } = await supabase.auth.getUser();
+               setAuth(fresh.user);
+               setAvatarUrl('');
+               setUploading(false);
+            },
+         },
+      ]);
    }
 
+   // Selecionar + Crop + Upload
    async function handleSelectImage() {
       const result = await ImagePicker.launchImageLibraryAsync({
          mediaTypes: ImagePicker.MediaTypeOptions.Images,
          allowsEditing: true,
          aspect: [1, 1],
-         quality: 0.8,
-         base64: true,
+         quality: 1,
       });
 
-      if (!result.canceled) {
-         const image = result.assets[0];
-         const filePath = `avatars/${user?.id}.jpg`;
+      if (result.canceled || !user?.id) return;
 
+      setUploading(true);
+
+      try {
+         const image = result.assets[0];
+
+         // Manipula a imagem (crop e compressão)
+         const manip = await ImageManipulator.manipulateAsync(
+            image.uri,
+            [{ resize: { width: 400 } }],
+            { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
+         );
+
+         // Faz download como ArrayBuffer
+         const response = await fetch(manip.uri);
+         const arrayBuffer = await response.arrayBuffer();
+
+         // Converte para Uint8Array — SUPABASE SUPORTA!
+         const uint8Array = new Uint8Array(arrayBuffer);
+
+         const filePath = `avatars/${user.id}.jpg`;
+
+         // Upload correto para React Native
          const { error: uploadError } = await supabase.storage
             .from('avatars')
-            .upload(filePath, decode(image.base64!), {
+            .upload(filePath, uint8Array, {
                contentType: 'image/jpeg',
                upsert: true,
-               metadata: {
-                  owner: user?.id,
-               },
             });
 
-         if (uploadError) {
-            console.error('Erro ao enviar imagem:', uploadError);
-            Alert.alert('Erro', uploadError.message || 'Falha ao enviar imagem.');
-            return;
-         }
+         if (uploadError) throw uploadError;
 
+         // Gera URL pública
          const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
-         const avatarUrl = data.publicUrl;
 
-         // Atualiza o user_metadata com o link da foto
-         await supabase.auth.updateUser({ data: { avatar_url: avatarUrl } });
+         const newAvatarUrl = `${data.publicUrl}?t=${Date.now()}`;
 
-         Alert.alert('✅ Sucesso', 'Foto de perfil atualizada!');
+         // Atualiza metadados do usuário
+         const { error: updateError } = await supabase.auth.updateUser({
+            data: { avatar_url: newAvatarUrl },
+         });
+
+         if (updateError) throw updateError;
+
+         // Atualiza estado local
+         const { data: fresh } = await supabase.auth.getUser();
+         setAuth(fresh.user);
+         setAvatarUrl(newAvatarUrl);
+
+         Alert.alert('Sucesso', 'Foto atualizada!');
+      } catch (err: any) {
+         console.log('Erro completo:', err);
+         Alert.alert('Erro', err.message || 'Falha ao processar imagem.');
+      } finally {
+         setUploading(false);
       }
+   }
+
+   // Sair
+   async function handleSignout() {
+      const { error } = await supabase.auth.signOut();
+      if (!error) setAuth(null);
+      else Alert.alert('Erro', 'Falha ao sair.');
    }
 
    return (
@@ -166,7 +222,7 @@ export function Profile() {
                />
             }
          >
-            {/* 🔹 Cabeçalho */}
+            {/* Logo */}
             <View style={styles.header}>
                <Image
                   source={require('@/assets/smartBills_second_logo.png')}
@@ -175,25 +231,39 @@ export function Profile() {
                />
             </View>
 
-            {/* 🔹 Foto do perfil */}
-            <TouchableOpacity onPress={handleSelectImage}>
-               <View style={styles.avatarContainer}>
-                  {user?.user_metadata?.avatar_url ? (
-                     <Image source={{ uri: user.user_metadata.avatar_url }} style={styles.avatar} />
-                  ) : (
-                     <TouchableOpacity onPress={handleSelectImage}>
+            {/* Avatar com loading e remoção */}
+            <View style={styles.avatarWrapper}>
+               <TouchableOpacity onPress={handleSelectImage} disabled={uploading}>
+                  <View style={styles.avatarContainer}>
+                     {avatarUrl ? (
+                        <Image source={{ uri: avatarUrl }} style={styles.avatar} />
+                     ) : (
                         <View style={styles.avatarPlaceholder}>
-                           <Text style={{ color: '#888' }}>Adicionar foto</Text>
+                           <MaterialIcons name="add-a-photo" size={28} color="#888" />
                         </View>
-                     </TouchableOpacity>
-                  )}
-               </View>
-            </TouchableOpacity>
+                     )}
 
-            {/* 🔹 Card de informações */}
+                     {/* Loading overlay */}
+                     {uploading && (
+                        <View style={styles.loadingOverlay}>
+                           <ActivityIndicator size="small" color={colors.primary} />
+                        </View>
+                     )}
+                  </View>
+               </TouchableOpacity>
+
+               {/* Botão remover (só aparece se tiver foto) */}
+               {avatarUrl && !uploading && (
+                  <TouchableOpacity onPress={handleRemoveAvatar} style={styles.removeButton}>
+                     <MaterialIcons name="delete-outline" size={20} color="#EF4444" />
+                  </TouchableOpacity>
+               )}
+            </View>
+
+            {/* Card de informações */}
             <View style={styles.card}>
                <Text style={styles.title}>Informações do Perfil</Text>
-               <Text style={styles.subtitle}>Atualize as informações do perfil da sua conta</Text>
+               <Text style={styles.subtitle}>Atualize as informações da sua conta</Text>
 
                <TextInput
                   style={styles.input}
@@ -201,37 +271,34 @@ export function Profile() {
                   value={name}
                   onChangeText={setName}
                />
-
                <TextInput
                   style={styles.input}
                   placeholder="E-mail"
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
+                  autoCapitalize="none"
                />
-
                <TextInput
                   style={styles.input}
-                  placeholder="Digite sua nova senha"
+                  placeholder="Nova senha (opcional)"
                   value={newPassword}
                   onChangeText={setNewPassword}
                   secureTextEntry
                />
                <TextInput
                   style={styles.input}
-                  placeholder="Digite sua senha atual"
+                  placeholder="Senha atual (obrigatória)"
                   value={oldPassword}
                   onChangeText={setOldPassword}
                   secureTextEntry
                />
 
                <Button
-                  text="Atualizar"
+                  text="Atualizar Perfil"
                   backgroundColor={colors.primary}
-                  width="100%"
-                  height={40}
-                  borderRadius={10}
-                  fontSize={16}
+                  width={'100%'}
+                  height={48}
                   onPress={handleUpdate}
                />
 

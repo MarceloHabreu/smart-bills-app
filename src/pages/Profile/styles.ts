@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
 
       resizeMode: 'contain',
    },
-   avatarContainer: {
+   /*   avatarContainer: {
       alignItems: 'center',
       marginVertical: 20,
    },
@@ -75,7 +75,7 @@ export const styles = StyleSheet.create({
       borderRadius: 8,
       padding: 12,
       marginBottom: 12,
-   },
+   }, */
    saveButton: {
       backgroundColor: colors.paybutton,
       borderRadius: 25,
@@ -89,12 +89,109 @@ export const styles = StyleSheet.create({
       fontFamily: 'Poppins_600SemiBold',
       fontSize: 16,
    },
-   logoutButton: {
+   /*   logoutButton: {
       marginTop: 20,
       alignItems: 'center',
    },
    logoutText: {
       color: '#EF4444',
       fontFamily: 'Poppins_600SemiBold',
+    },
+ */
+   avatarWrapper: {
+      position: 'relative',
+      marginBottom: 24,
+   },
+   avatarContainer: {
+      position: 'relative',
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      overflow: 'hidden',
+      backgroundColor: '#E5E7EB',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 3,
+      borderColor: '#fff',
+      elevation: 4,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 6,
+   },
+   avatar: {
+      width: '100%',
+      height: '100%',
+   },
+   avatarPlaceholder: {
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#F3F4F6',
+   },
+   loadingOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(255,255,255,0.8)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 60,
+   },
+   removeButton: {
+      position: 'absolute',
+      right: -8,
+      bottom: -8,
+      backgroundColor: '#fff',
+      padding: 8,
+      borderRadius: 20,
+      elevation: 3,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
+   },
+   card: {
+      width: '100%',
+      backgroundColor: '#fff',
+      borderRadius: 16,
+      padding: 20,
+      elevation: 2,
+      shadowColor: '#000',
+      shadowOpacity: 0.05,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
+   },
+   title: {
+      fontSize: 18,
+      fontFamily: fonts.body_poppins600,
+      color: '#1F2937',
+      textAlign: 'center',
+      marginBottom: 4,
+   },
+   subtitle: {
+      fontSize: 13,
+      color: '#6B7280',
+      textAlign: 'center',
+      marginBottom: 20,
+      fontFamily: fonts.body_poppins400,
+   },
+   input: {
+      borderWidth: 1.5,
+      borderColor: '#E5E7EB',
+      borderRadius: 12,
+      padding: 14,
+      marginBottom: 12,
+      fontSize: 15,
+      fontFamily: fonts.body_poppins400,
+      backgroundColor: '#FAFAFA',
+   },
+   logoutButton: {
+      marginTop: 20,
+      alignItems: 'center',
+   },
+   logoutText: {
+      color: '#EF4444',
+      fontFamily: fonts.body_poppins600,
+      fontSize: 15,
    },
 });
