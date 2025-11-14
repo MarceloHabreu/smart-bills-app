@@ -104,7 +104,7 @@ export function HistoryPayments() {
                <Text style={styles.emptyText}>Nenhum pagamento encontrado.</Text>
             ) : (
                payments.map((item) => (
-                  <View style={styles.card}>
+                  <View key={item.id} style={styles.card}>
                      {/* Linha superior */}
                      <View style={styles.cardTop}>
                         <View style={styles.cardInfo}>
