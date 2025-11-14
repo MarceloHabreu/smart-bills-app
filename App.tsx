@@ -14,10 +14,13 @@ import {
    Poppins_700Bold,
 } from '@expo-google-fonts/poppins';
 
-import AppLoading from 'expo-app-loading';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { useNavigationContainerRef } from '@react-navigation/native';
 import AuthGate from './AuthGate';
+import * as SplashScreen from 'expo-splash-screen';
+
+// Previne que a splash suma
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
    const navigationRef = useNavigationContainerRef<any>();
@@ -30,9 +33,13 @@ export default function App() {
       Poppins_700Bold,
    });
 
-   if (!fontsLoaded) {
-      return <AppLoading />;
-   }
+   React.useEffect(() => {
+      if (fontsLoaded) {
+         SplashScreen.hideAsync();
+      }
+   }, [fontsLoaded]);
+
+   if (!fontsLoaded) return null;
    return (
       <AuthProvider>
          <NavigationContainer ref={navigationRef}>
