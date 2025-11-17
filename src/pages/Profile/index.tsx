@@ -20,11 +20,10 @@ import colors from '@/constants/colors';
 import { Button } from '@/components/Button';
 import { useAuth } from '@/contexts/AuthContext';
 import { styles } from './styles';
-import { updateProfile } from '@/services/userService';
 
 export function Profile() {
    const { user, setAuth } = useAuth();
-   const [name, setName] = useState(user?.user_metadata?.name || '');
+   const [name, setName] = useState(user?.user_metadata?.name || 'Marcelo H');
    const [email, setEmail] = useState(user?.email || '');
    const [newPassword, setNewPassword] = useState('');
    const [oldPassword, setOldPassword] = useState('');
@@ -43,9 +42,10 @@ export function Profile() {
       const { data, error } = await supabase.auth.getUser();
       if (!error && data.user) {
          setAuth(data.user);
-         setName(data.user.user_metadata?.name || '');
+         setName(user?.user_metadata?.name || 'Marcelo H');
          setEmail(data.user.email || '');
          setAvatarUrl(data.user.user_metadata?.avatar_url || '');
+         console.log(data);
       }
       setRefreshing(false);
    }
@@ -76,7 +76,11 @@ export function Profile() {
          if (signInError) throw new Error('Senha atual incorreta.');
 
          // 2. Monta update SEM email se for igual
-         const updates: any = { data: { name } };
+         const updates: any = {
+            user_metadata: {
+               name,
+            },
+         };
 
          if (email !== user?.email) {
             updates.email = email;
